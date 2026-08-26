@@ -2,22 +2,42 @@ from flask import Flask, render_template, request, redirect, url_for, flash, sen
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 import os
+import requests
 from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = 'super-secret-key-12345'
 
-# --- БАЗА ДАННЫХ ---
+# --- НАСТРОЙКА БАЗЫ ДАННЫХ ---
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-# --- АВТОРИЗАЦИЯ ---
+# --- НАСТРОЙКА АВТОРИЗАЦИИ ---
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-# --- МОДЕЛИ ---
+# --- НАСТРОЙКИ TELEGRAM (УЖЕ С ТВОИМИ ДАННЫМИ) ---
+BOT_TOKEN = "8619987825:AAFfRaJ-endW8YTZPYgZ3PH8f6geTnZU3Ho"
+CHAT_ID = "1099656613"
+
+def send_telegram(message):
+    """Отправляет сообщение в Telegram"""
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+    data = {
+        "chat_id": CHAT_ID,
+        "text": message,
+        "parse_mode": "HTML"
+    }
+    try:
+        response = requests.post(url, data=data)
+        if response.status_code != 200:
+            print(f"Ошибка отправки в Telegram: {response.text}")
+    except Exception as e:
+        print(f"Исключение при отправке в Telegram: {e}")
+
+# --- МОДЕЛИ БАЗЫ ДАННЫХ ---
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
@@ -51,13 +71,14 @@ class Feedback(db.Model):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# --- СОЗДАНИЕ БАЗЫ И АДМИНА ---
+# --- СОЗДАНИЕ БАЗЫ ДАННЫХ И АДМИНА ---
 with app.app_context():
     db.create_all()
     if not User.query.filter_by(username='admin').first():
         admin = User(username='admin', password='admin123', is_admin=True)
         db.session.add(admin)
         db.session.commit()
+        print("Админ создан: admin / admin123")
 
 # --- МАРШРУТЫ ---
 
@@ -77,6 +98,13 @@ def register():
         user = User(username=username, password=password)
         db.session.add(user)
         db.session.commit()
+
+        # 📩 Уведомление в Telegram
+        msg = f"🆕 <b>Новый пользователь!</b>\n\n"
+        msg += f"👤 Логин: {username}\n"
+        msg += f"🕒 Дата: {datetime.now().strftime('%d.%m.%Y %H:%M')}"
+        send_telegram(msg)
+
         flash('Регистрация успешна! Войдите.', 'success')
         return redirect(url_for('login'))
     return render_template('register.html')
@@ -113,6 +141,15 @@ def order():
     order = Order(user_id=current_user.id, service=service, description=description)
     db.session.add(order)
     db.session.commit()
+
+    # 📩 Уведомление в Telegram
+    msg = f"🆕 <b>Новый заказ!</b>\n\n"
+    msg += f"👤 Клиент: {current_user.username}\n"
+    msg += f"📦 Услуга: {service}\n"
+    msg += f"📝 Описание: {description}\n"
+    msg += f"🕒 Дата: {order.created_at.strftime('%d.%m.%Y %H:%M')}"
+    send_telegram(msg)
+
     flash('Заказ отправлен!', 'success')
     return redirect(url_for('profile'))
 
@@ -125,11 +162,20 @@ def feedback():
         fb = Feedback(name=name, email=email, message=message)
         db.session.add(fb)
         db.session.commit()
+
+        # 📩 Уведомление в Telegram
+        msg = f"💬 <b>Новое сообщение!</b>\n\n"
+        msg += f"👤 Имя: {name}\n"
+        msg += f"📧 Email: {email}\n"
+        msg += f"📝 Сообщение: {message}\n"
+        msg += f"🕒 Дата: {datetime.now().strftime('%d.%m.%Y %H:%M')}"
+        send_telegram(msg)
+
         flash('Сообщение отправлено!', 'success')
         return redirect(url_for('feedback'))
     return render_template('feedback.html')
 
-# --- АДМИН-ПАНЕЛЬ (УПРАВЛЕНИЕ УСЛУГАМИ) ---
+# --- АДМИН-ПАНЕЛЬ ---
 @app.route('/admin')
 @login_required
 def admin_panel():
