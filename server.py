@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 import os
@@ -25,6 +25,13 @@ class User(UserMixin, db.Model):
     is_admin = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+class Service(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text)
+    price = db.Column(db.String(50))
+    image_url = db.Column(db.String(300))
+
 class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -32,13 +39,6 @@ class Order(db.Model):
     description = db.Column(db.Text)
     status = db.Column(db.String(50), default='Новый')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
-class Service(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(200))
-    description = db.Column(db.Text)
-    price = db.Column(db.String(50))
-    image_url = db.Column(db.String(300))
 
 class Feedback(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -129,15 +129,15 @@ def feedback():
         return redirect(url_for('feedback'))
     return render_template('feedback.html')
 
+# --- АДМИН-ПАНЕЛЬ (УПРАВЛЕНИЕ УСЛУГАМИ) ---
 @app.route('/admin')
 @login_required
 def admin_panel():
     if not current_user.is_admin:
         return "Доступ запрещён", 403
-    orders = Order.query.all()
     services = Service.query.all()
-    feedbacks = Feedback.query.all()
-    return render_template('admin.html', orders=orders, services=services, feedbacks=feedbacks)
+    orders = Order.query.all()
+    return render_template('admin.html', services=services, orders=orders)
 
 @app.route('/admin/add_service', methods=['POST'])
 @login_required
@@ -154,6 +154,22 @@ def add_service():
     flash('Услуга добавлена!', 'success')
     return redirect(url_for('admin_panel'))
 
+@app.route('/admin/edit_service/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_service(id):
+    if not current_user.is_admin:
+        return "Доступ запрещён", 403
+    service = Service.query.get(id)
+    if request.method == 'POST':
+        service.title = request.form['title']
+        service.description = request.form['description']
+        service.price = request.form['price']
+        service.image_url = request.form['image_url']
+        db.session.commit()
+        flash('Услуга обновлена!', 'success')
+        return redirect(url_for('admin_panel'))
+    return render_template('edit_service.html', service=service)
+
 @app.route('/admin/delete_service/<int:id>')
 @login_required
 def delete_service(id):
@@ -165,15 +181,15 @@ def delete_service(id):
     flash('Услуга удалена!', 'success')
     return redirect(url_for('admin_panel'))
 
-@app.route('/admin/delete_order/<int:id>')
+@app.route('/admin/order/<int:id>/status', methods=['POST'])
 @login_required
-def delete_order(id):
+def update_order_status(id):
     if not current_user.is_admin:
         return "Доступ запрещён", 403
     order = Order.query.get(id)
-    db.session.delete(order)
+    order.status = request.form['status']
     db.session.commit()
-    flash('Заказ удалён!', 'success')
+    flash('Статус заказа обновлён!', 'success')
     return redirect(url_for('admin_panel'))
 
 @app.route('/map')
@@ -181,4 +197,5 @@ def map():
     return render_template('map.html')
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=8000)
+    port = int(os.environ.get('PORT', 8000))
+    app.run(debug=True, host='0.0.0.0', port=port)

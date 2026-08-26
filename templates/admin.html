@@ -1,22 +1,83 @@
 <!DOCTYPE html>
 <html>
-<head><meta charset="UTF-8"><title>Админ</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"></head>
+<head><meta charset="UTF-8"><title>Админ-панель</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
 <body>
-<nav class="navbar navbar-dark bg-dark"><div class="container"><a class="navbar-brand" href="/">← Главная</a></div></nav>
+<nav class="navbar navbar-dark bg-dark"><div class="container"><a class="navbar-brand" href="/">← На главную</a></div></nav>
 <div class="container mt-4">
+
     <h2>👑 Админ-панель</h2>
-    <h4 class="mt-4">📦 Все заказы</h4>
-    <ul class="list-group">
-        {% for order in orders %}
-        <li class="list-group-item d-flex justify-content-between">
-            <span>Заказ #{{ order.id }} — {{ order.service }}</span>
-            <span class="badge bg-warning">{{ order.status }}</span>
-        </li>
-        {% else %}
-        <li class="list-group-item text-muted">Заказов пока нет</li>
-        {% endfor %}
-    </ul>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card p-3">
+                <h4>➕ Добавить услугу</h4>
+                <form method="POST" action="/admin/add_service">
+                    <input class="form-control mb-2" name="title" placeholder="Название" required>
+                    <textarea class="form-control mb-2" name="description" placeholder="Описание" rows="2"></textarea>
+                    <input class="form-control mb-2" name="price" placeholder="Цена" required>
+                    <input class="form-control mb-2" name="image_url" placeholder="Ссылка на картинку (необязательно)">
+                    <button class="btn btn-success w-100">Добавить</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card p-3">
+                <h4>📋 Услуги ({{ services|length }})</h4>
+                <ul class="list-group">
+                    {% for s in services %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>{{ s.title }}</strong><br>
+                            <small>{{ s.price }}</small>
+                        </div>
+                        <div>
+                            <a href="/admin/edit_service/{{ s.id }}" class="btn btn-sm btn-warning">✏️</a>
+                            <a href="/admin/delete_service/{{ s.id }}" class="btn btn-sm btn-danger" onclick="return confirm('Удалить?')">🗑️</a>
+                        </div>
+                    </li>
+                    {% else %}
+                    <li class="list-group-item">Нет услуг. Добавьте первую!</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card p-3">
+                <h4>📦 Заказы ({{ orders|length }})</h4>
+                <table class="table">
+                    <thead><tr><th>ID</th><th>Услуга</th><th>Клиент</th><th>Статус</th><th>Действие</th></tr></thead>
+                    <tbody>
+                    {% for o in orders %}
+                    <tr>
+                        <td>#{{ o.id }}</td>
+                        <td>{{ o.service }}</td>
+                        <td>{{ o.user_id }}</td>
+                        <td>
+                            <form method="POST" action="/admin/order/{{ o.id }}/status">
+                                <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+                                    <option value="Новый" {% if o.status == 'Новый' %}selected{% endif %}>Новый</option>
+                                    <option value="В работе" {% if o.status == 'В работе' %}selected{% endif %}>В работе</option>
+                                    <option value="Завершён" {% if o.status == 'Завершён' %}selected{% endif %}>Завершён</option>
+                                </select>
+                            </form>
+                        </td>
+                        <td>{{ o.created_at.strftime('%d.%m.%Y') }}</td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="5">Заказов пока нет</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
 </div>
 </body>
 </html>
