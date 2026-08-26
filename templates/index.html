@@ -3,15 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Моя студия | Премиум-сервис</title>
-
-    <!-- Font Awesome (иконки) -->
+    <title>MYSTUDIO | Premium</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <!-- Google Fonts (красивый шрифт) -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-
     <style>
-        /* ===== ГЛОБАЛЬНЫЕ СТИЛИ ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', sans-serif;
@@ -19,14 +14,10 @@
             color: white;
             overflow-x: hidden;
         }
-
-        /* ===== АНИМИРОВАННЫЙ ФОН ===== */
         .bg-animation {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             z-index: -2;
             background: linear-gradient(135deg, #0b0b1a 0%, #1a1a3e 25%, #2d1b69 50%, #1a1a3e 75%, #0b0b1a 100%);
             background-size: 400% 400%;
@@ -37,14 +28,10 @@
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
-
-        /* Плавающие частицы */
         .particles {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             z-index: -1;
             overflow: hidden;
         }
@@ -58,53 +45,52 @@
         .particle:nth-child(2) { width: 120px; height: 120px; left: 30%; animation-duration: 25s; animation-delay: 2s; }
         .particle:nth-child(3) { width: 60px; height: 60px; left: 60%; animation-duration: 18s; animation-delay: 4s; }
         .particle:nth-child(4) { width: 100px; height: 100px; left: 80%; animation-duration: 22s; animation-delay: 1s; }
-        .particle:nth-child(5) { width: 140px; height: 140px; left: 45%; animation-duration: 28s; animation-delay: 3s; }
         @keyframes floatUp {
             0% { bottom: -200px; opacity: 0; transform: scale(0.5) rotate(0deg); }
             10% { opacity: 1; }
             90% { opacity: 1; }
             100% { bottom: 110%; opacity: 0; transform: scale(1.2) rotate(720deg); }
         }
-
-        /* ===== ШАПКА ===== */
         .navbar {
             padding: 20px 50px;
             background: rgba(11, 11, 26, 0.7);
             backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(255,255,255,0.05);
-            position: sticky;
-            top: 0;
-            z-index: 100;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .navbar-brand img {
+            height: 50px;
+            width: auto;
+            border-radius: 10px;
             transition: 0.3s;
         }
-        .navbar:hover { background: rgba(11, 11, 26, 0.9); }
-        .navbar-brand {
-            font-size: 28px;
-            font-weight: 800;
-            background: linear-gradient(135deg, #a855f7, #6366f1);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-decoration: none;
+        .navbar-brand img:hover {
+            transform: scale(1.05);
         }
-        .navbar .nav-links a {
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .nav-links a {
             color: rgba(255,255,255,0.7);
             text-decoration: none;
-            margin-left: 25px;
             padding: 8px 16px;
             border-radius: 30px;
             transition: 0.3s;
             font-weight: 500;
             font-size: 14px;
         }
-        .navbar .nav-links a:hover {
+        .nav-links a:hover {
             background: rgba(255,255,255,0.1);
             color: white;
-            transform: translateY(-2px);
         }
-        .navbar .btn-primary-custom {
+        .btn-primary-custom {
             background: linear-gradient(135deg, #a855f7, #6366f1);
             border: none;
             padding: 10px 25px;
@@ -112,74 +98,47 @@
             color: white;
             font-weight: 600;
             transition: 0.3s;
-            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+            text-decoration: none;
+            display: inline-block;
         }
-        .navbar .btn-primary-custom:hover {
+        .btn-primary-custom:hover {
             transform: scale(1.05);
             box-shadow: 0 8px 30px rgba(99, 102, 241, 0.5);
         }
-        .navbar .btn-outline-custom {
+        .btn-outline-custom {
             background: transparent;
             border: 1px solid rgba(255,255,255,0.2);
-            padding: 10px 25px;
+            padding: 8px 20px;
             border-radius: 30px;
             color: white;
+            text-decoration: none;
             transition: 0.3s;
         }
-        .navbar .btn-outline-custom:hover {
+        .btn-outline-custom:hover {
             background: rgba(255,255,255,0.05);
             border-color: white;
         }
         .user-greeting {
             color: rgba(255,255,255,0.8);
-            margin-right: 15px;
             font-weight: 500;
         }
-
-        /* ===== ГЕРОЙ ===== */
         .hero {
             text-align: center;
             padding: 80px 20px 60px;
-            position: relative;
         }
         .hero h1 {
             font-size: 64px;
             font-weight: 800;
-            line-height: 1.1;
-            margin-bottom: 20px;
             background: linear-gradient(135deg, #ffffff 0%, #a855f7 50%, #6366f1 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: fadeInDown 1s ease;
-        }
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-40px); }
-            to { opacity: 1; transform: translateY(0); }
         }
         .hero p {
             font-size: 20px;
             color: rgba(255,255,255,0.6);
             max-width: 600px;
-            margin: 0 auto 40px;
-            animation: fadeInUp 1s ease 0.3s both;
+            margin: 20px auto 0;
         }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .hero .badge-premium {
-            display: inline-block;
-            background: rgba(168, 85, 247, 0.2);
-            border: 1px solid rgba(168, 85, 247, 0.3);
-            padding: 6px 20px;
-            border-radius: 30px;
-            font-size: 12px;
-            color: #a855f7;
-            font-weight: 600;
-            margin-bottom: 30px;
-        }
-
-        /* ===== УСЛУГИ ===== */
         .services-section {
             padding: 40px 20px 60px;
             max-width: 1200px;
@@ -187,7 +146,7 @@
         }
         .services-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 30px;
         }
         .service-card {
@@ -197,51 +156,24 @@
             border-radius: 24px;
             padding: 35px 30px;
             text-align: center;
-            transition: 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-            position: relative;
-            overflow: hidden;
-        }
-        .service-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(168,85,247,0.05) 0%, transparent 70%);
-            opacity: 0;
             transition: 0.5s;
         }
-        .service-card:hover::before { opacity: 1; }
         .service-card:hover {
             transform: translateY(-12px) scale(1.02);
             border-color: rgba(168, 85, 247, 0.3);
             box-shadow: 0 30px 60px rgba(0,0,0,0.4);
         }
-        .service-card .icon {
-            font-size: 48px;
-            margin-bottom: 20px;
-            display: block;
-        }
-        .service-card h3 {
-            font-size: 22px;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-        .service-card p {
-            color: rgba(255,255,255,0.6);
-            font-size: 15px;
-            line-height: 1.6;
-            margin-bottom: 15px;
-        }
+        .service-card .icon { font-size: 48px; display: block; margin-bottom: 20px; }
+        .service-card h3 { font-size: 22px; font-weight: 700; }
+        .service-card p { color: rgba(255,255,255,0.6); font-size: 15px; }
         .service-card .price-tag {
             font-size: 28px;
             font-weight: 800;
             background: linear-gradient(135deg, #a855f7, #6366f1);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 20px;
             display: block;
+            margin: 15px 0;
         }
         .service-card .btn-order {
             background: linear-gradient(135deg, #a855f7, #6366f1);
@@ -250,111 +182,119 @@
             border-radius: 30px;
             color: white;
             font-weight: 600;
-            transition: 0.3s;
             width: 100%;
+            transition: 0.3s;
             cursor: pointer;
         }
         .service-card .btn-order:hover {
             transform: scale(1.05);
             box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
         }
-
-        /* ===== ФУТЕР ===== */
         footer {
             text-align: center;
             padding: 40px 20px;
             border-top: 1px solid rgba(255,255,255,0.05);
-            color: rgba(255,255,255,0.3);
-            font-size: 14px;
         }
-        footer .social-links a {
-            color: rgba(255,255,255,0.3);
-            margin: 0 12px;
-            font-size: 20px;
-            transition: 0.3s;
-        }
-        footer .social-links a:hover { color: white; }
-
-        /* ===== АДАПТИВНОСТЬ ===== */
+        footer a { transition: 0.3s; }
+        footer a:hover { color: white !important; }
         @media (max-width: 768px) {
-            .navbar { padding: 15px 20px; flex-direction: column; gap: 10px; }
-            .navbar .nav-links a { margin: 0 10px; font-size: 12px; }
+            .navbar { flex-direction: column; padding: 15px 20px; }
+            .nav-links { justify-content: center; }
             .hero h1 { font-size: 36px; }
-            .hero p { font-size: 16px; }
             .services-grid { grid-template-columns: 1fr; }
+            .navbar-brand img { height: 40px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Анимированный фон -->
-    <div class="bg-animation"></div>
-    <div class="particles">
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
+<div class="bg-animation"></div>
+<div class="particles">
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+</div>
+
+<!-- ===== ШАПКА С ЛОГОТИПОМ-КАРТИНКОЙ ===== -->
+<nav class="navbar">
+    <a class="navbar-brand" href="/">
+        <img src="/static/images/logo.png" alt="Логотип MYSTUDIO">
+    </a>
+    <div class="nav-links">
+        <a href="tel:+79001234567" style="font-size: 14px;">
+            <i class="fas fa-phone"></i> +7 (900) 123-45-67
+        </a>
+        <a href="mailto:info@mystudio.ru" style="font-size: 14px;">
+            <i class="fas fa-envelope"></i> info@mystudio.ru
+        </a>
+
+        {% if current_user.is_authenticated %}
+            <span class="user-greeting">👋 {{ current_user.username }}</span>
+            <a href="/profile"><i class="fas fa-user"></i> Профиль</a>
+            {% if current_user.is_admin %}<a href="/admin"><i class="fas fa-crown"></i> Админ</a>{% endif %}
+            <a href="/logout" style="color: #f87171;">Выйти</a>
+        {% else %}
+            <a href="/login"><i class="fas fa-sign-in-alt"></i> Войти</a>
+            <a href="/register" class="btn-primary-custom"><i class="fas fa-user-plus"></i> Регистрация</a>
+        {% endif %}
     </div>
+</nav>
 
-    <!-- ===== ШАПКА ===== -->
-    <nav class="navbar">
-        <a class="navbar-brand" href="#">✦ MYSTUDIO</a>
-        <div class="nav-links">
-            {% if current_user.is_authenticated %}
-                <span class="user-greeting">👋 {{ current_user.username }}</span>
-                <a href="/profile"><i class="fas fa-user"></i> Профиль</a>
-                {% if current_user.is_admin %}<a href="/admin"><i class="fas fa-crown"></i> Админ</a>{% endif %}
-                <a href="/logout" style="color: #f87171;">Выйти</a>
-            {% else %}
-                <a href="/login"><i class="fas fa-sign-in-alt"></i> Войти</a>
-                <a href="/register" class="btn-primary-custom"><i class="fas fa-user-plus"></i> Регистрация</a>
-            {% endif %}
+<!-- ===== ГЕРОЙ ===== -->
+<div class="hero">
+    <h1>Создаём цифровой успех</h1>
+    <p>Разработка сайтов, дизайн и маркетинг — всё для вашего бизнеса</p>
+</div>
+
+<!-- ===== УСЛУГИ ===== -->
+<div class="services-section">
+    <div class="services-grid">
+        {% for service in services %}
+        <div class="service-card">
+            <span class="icon">
+                {% if 'SMM' in service.title %}📱
+                {% elif 'Сайт' in service.title %}🌐
+                {% elif 'Дизайн' in service.title %}🎨
+                {% else %}⚡
+                {% endif %}
+            </span>
+            <h3>{{ service.title }}</h3>
+            <p>{{ service.description }}</p>
+            <span class="price-tag">{{ service.price }}</span>
+            <form action="/order" method="POST">
+                <input type="hidden" name="service" value="{{ service.title }}">
+                <input type="hidden" name="description" value="{{ service.description }}">
+                <button class="btn-order"><i class="fas fa-rocket"></i> Заказать</button>
+            </form>
         </div>
-    </nav>
-
-    <!-- ===== ГЕРОЙ ===== -->
-    <div class="hero">
-        <div class="badge-premium">✦ ПРЕМИУМ-СЕРВИС</div>
-        <h1>Создаём <br>цифровой успех</h1>
-        <p>Разработка сайтов, дизайн и маркетинг — <br>всё в одной экосистеме для вашего бизнеса.</p>
+        {% endfor %}
     </div>
+</div>
 
-    <!-- ===== УСЛУГИ ===== -->
-    <div class="services-section">
-        <div class="services-grid">
-            {% for service in services %}
-            <div class="service-card">
-                <span class="icon">
-                    {% if 'SMM' in service.title %}📱
-                    {% elif 'Сайт' in service.title %}🌐
-                    {% elif 'Дизайн' in service.title %}🎨
-                    {% else %}⚡
-                    {% endif %}
-                </span>
-                <h3>{{ service.title }}</h3>
-                <p>{{ service.description }}</p>
-                <span class="price-tag">{{ service.price }}</span>
-                <form action="/order" method="POST">
-                    <input type="hidden" name="service" value="{{ service.title }}">
-                    <input type="hidden" name="description" value="{{ service.description }}">
-                    <button class="btn-order"><i class="fas fa-rocket"></i> Заказать</button>
-                </form>
-            </div>
-            {% endfor %}
+<!-- ===== ПОДВАЛ ===== -->
+<footer>
+    <div style="max-width: 600px; margin: 0 auto;">
+        <div style="display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; margin-bottom: 20px;">
+            <a href="tel:+79001234567" style="color: rgba(255,255,255,0.6); text-decoration: none; font-size: 14px;">
+                <i class="fas fa-phone"></i> +7 (900) 123-45-67
+            </a>
+            <a href="mailto:info@mystudio.ru" style="color: rgba(255,255,255,0.6); text-decoration: none; font-size: 14px;">
+                <i class="fas fa-envelope"></i> info@mystudio.ru
+            </a>
+            <span style="color: rgba(255,255,255,0.4); font-size: 14px;">
+                <i class="fas fa-map-marker-alt"></i> Москва, ул. Тверская, д. 1
+            </span>
         </div>
+        <div style="margin-bottom: 20px;">
+            <a href="#" style="color: rgba(255,255,255,0.3); margin: 0 12px; font-size: 20px;"><i class="fab fa-telegram"></i></a>
+            <a href="#" style="color: rgba(255,255,255,0.3); margin: 0 12px; font-size: 20px;"><i class="fab fa-instagram"></i></a>
+            <a href="#" style="color: rgba(255,255,255,0.3); margin: 0 12px; font-size: 20px;"><i class="fab fa-youtube"></i></a>
+            <a href="#" style="color: rgba(255,255,255,0.3); margin: 0 12px; font-size: 20px;"><i class="fab fa-github"></i></a>
+        </div>
+        <p style="color: rgba(255,255,255,0.2); font-size: 13px;">© 2026 MYSTUDIO. Все права защищены.</p>
     </div>
-
-    <!-- ===== ФУТЕР ===== -->
-    <footer>
-        <div class="social-links">
-            <a href="#"><i class="fab fa-telegram"></i></a>
-            <a href="#"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fab fa-youtube"></i></a>
-            <a href="#"><i class="fab fa-github"></i></a>
-        </div>
-        <p>© 2026 MYSTUDIO. Все права защищены.</p>
-    </footer>
+</footer>
 
 </body>
 </html>
