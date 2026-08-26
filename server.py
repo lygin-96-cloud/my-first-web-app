@@ -1,393 +1,226 @@
-from flask import Flask, request, render_template_string, redirect, url_for, flash
-import sqlite3
+from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 import os
+import requests
+from datetime import datetime
 
 app = Flask(__name__)
-app.secret_key = 'supersecretkey'
+app.secret_key = 'super-secret-key-12345'
 
-# --- ИНИЦИАЛИЗАЦИЯ БАЗ ДАННЫХ ---
-def init_db():
-    conn = sqlite3.connect('database.db')
-    c = conn.cursor()
-    c.execute('''CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT UNIQUE,
-        password TEXT
-    )''')
-    c.execute('''CREATE TABLE IF NOT EXISTS orders (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        customer_name TEXT,
-        customer_phone TEXT,
-        service_type TEXT,
-        order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        status TEXT DEFAULT 'Новый'
-    )''')
-    conn.commit()
-    conn.close()
+# --- НАСТРОЙКА БАЗЫ ДАННЫХ ---
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
 
-init_db()
+# --- НАСТРОЙКА АВТОРИЗАЦИИ ---
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
 
-# --- HTML-ШАБЛОН (ТОТ ЖЕ, ЧТО Я ДАЛ В ПРОШЛЫЙ РАЗ) ---
-PAGE_TEMPLATE = '''
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Моя студия услуг</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f0f2f5;
-            min-height: 100vh;
-        }
-        .navbar {
-            background: white;
-            padding: 15px 50px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .navbar h1 { color: #667eea; font-size: 24px; }
-        .navbar a {
-            color: #333;
-            text-decoration: none;
-            margin-left: 20px;
-            padding: 8px 15px;
-            border-radius: 8px;
-            transition: 0.3s;
-        }
-        .navbar a:hover { background: #667eea; color: white; }
-        .navbar .btn-logout { color: #dc3545; }
-        .navbar .btn-logout:hover { background: #dc3545; color: white; }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
-        .hero {
-            text-align: center;
-            padding: 40px 0;
-        }
-        .hero h1 { font-size: 48px; color: #333; }
-        .hero p { font-size: 20px; color: #666; margin-top: 10px; }
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
-            margin: 40px 0;
-        }
-        .service-card {
-            background: white;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-            transition: 0.3s;
-            text-align: center;
-        }
-        .service-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.2);
-        }
-        .service-card h3 { color: #333; font-size: 22px; }
-        .service-card p { color: #666; margin: 15px 0; }
-        .service-card .price { 
-            color: #667eea; 
-            font-size: 28px; 
-            font-weight: bold; 
-        }
-        .service-card button {
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 30px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: 0.3s;
-            margin-top: 15px;
-        }
-        .service-card button:hover {
-            background: #5a67d8;
-            transform: scale(1.05);
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-content {
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            width: 400px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-        .modal-content h2 { margin-bottom: 20px; color: #333; }
-        .modal-content input, .modal-content select {
-            width: 100%;
-            padding: 12px;
-            margin: 8px 0;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-        }
-        .modal-content button {
-            width: 100%;
-            padding: 12px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        .modal-content button:hover { background: #5a67d8; }
-        .close {
-            float: right;
-            font-size: 24px;
-            cursor: pointer;
-        }
-        .flash-message {
-            padding: 15px;
-            border-radius: 10px;
-            margin: 10px 0;
-        }
-        .flash-error { background: #f8d7da; color: #721c24; }
-        .flash-success { background: #d4edda; color: #155724; }
-        @media (max-width: 768px) {
-            .navbar { flex-direction: column; padding: 15px; }
-            .hero h1 { font-size: 32px; }
-            .container { padding: 20px 15px; }
-            .modal-content { width: 90%; margin: 20px; }
-        }
-    </style>
-</head>
-<body>
+# --- TELEGRAM НАСТРОЙКИ ---
+BOT_TOKEN = "ТВОЙ_ТОКЕН"        # 👈 замени
+CHAT_ID = "ТВОЙ_CHAT_ID"        # 👈 замени
 
-<div class="navbar">
-    <h1>🚀 Моя студия</h1>
-    <div>
-        {% if user %}
-            <span>👋 {{ user }}</span>
-            <a href="/orders">📋 Заказы</a>
-            <a href="/admin">🔐 Админ</a>
-            <a href="/logout" class="btn-logout">Выйти</a>
-        {% else %}
-            <a href="#register">Регистрация</a>
-            <a href="#login">Вход</a>
-        {% endif %}
-    </div>
-</div>
-
-<div class="container">
-    <div class="hero">
-        <h1>🔥 Профессиональные услуги</h1>
-        <p>Выбери свой тариф и закажи прямо сейчас</p>
-    </div>
-
-    <div class="services-grid">
-        <div class="service-card">
-            <h3>📱 SMM-продвижение</h3>
-            <p>Настройка рекламы в Instagram, VK, Telegram</p>
-            <div class="price">15 000 ₽</div>
-            <button onclick="openOrder('SMM-продвижение')">Заказать</button>
-        </div>
-        <div class="service-card">
-            <h3>🌐 Сайт под ключ</h3>
-            <p>Создам сайт от визитки до интернет-магазина</p>
-            <div class="price">от 30 000 ₽</div>
-            <button onclick="openOrder('Сайт под ключ')">Заказать</button>
-        </div>
-        <div class="service-card">
-            <h3>🎨 Дизайн-проект</h3>
-            <p>Разработка дизайна для бренда, логотип, айдентика</p>
-            <div class="price">10 000 ₽</div>
-            <button onclick="openOrder('Дизайн-проект')">Заказать</button>
-        </div>
-    </div>
-
-    {% if not user %}
-    <div style="max-width: 400px; margin: 50px auto; background: white; padding: 30px; border-radius: 20px;">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="flash-message flash-{{ category }}">{{ message }}</div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-        <h2 id="register">Регистрация</h2>
-        <form action="/register" method="POST">
-            <input type="text" name="username" placeholder="Логин" required>
-            <input type="password" name="password" placeholder="Пароль" required>
-            <button type="submit">Зарегистрироваться</button>
-        </form>
-        <h2 id="login">Вход</h2>
-        <form action="/login" method="POST">
-            <input type="text" name="username" placeholder="Логин" required>
-            <input type="password" name="password" placeholder="Пароль" required>
-            <button type="submit">Войти</button>
-        </form>
-    </div>
-    {% endif %}
-</div>
-
-<div id="orderModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeOrder()">×</span>
-        <h2>📝 Оформление заказа</h2>
-        <form action="/place-order" method="POST">
-            <input type="text" name="service" id="selectedService" readonly style="background:#f0f2f5;">
-            <input type="text" name="customer_name" placeholder="Ваше имя" required>
-            <input type="text" name="customer_phone" placeholder="Телефон" required>
-            <button type="submit">Отправить заявку</button>
-        </form>
-    </div>
-</div>
-
-<script>
-    function openOrder(service) {
-        document.getElementById('selectedService').value = service;
-        document.getElementById('orderModal').style.display = 'flex';
+def send_telegram_message(message):
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+    data = {
+        "chat_id": CHAT_ID,
+        "text": message,
+        "parse_mode": "HTML"
     }
-    function closeOrder() {
-        document.getElementById('orderModal').style.display = 'none';
-    }
-    window.onclick = function(event) {
-        let modal = document.getElementById('orderModal');
-        if (event.target == modal) modal.style.display = 'none';
-    }
-</script>
+    try:
+        requests.post(url, data=data)
+    except Exception as e:
+        print("Ошибка отправки в Telegram:", e)
 
-</body>
-</html>
-'''
+# --- МОДЕЛИ БАЗЫ ДАННЫХ ---
+class User(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    password = db.Column(db.String(120), nullable=False)
+    is_admin = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+class Order(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    service = db.Column(db.String(200))
+    description = db.Column(db.Text)
+    status = db.Column(db.String(50), default='Новый')
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+class Service(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200))
+    description = db.Column(db.Text)
+    price = db.Column(db.String(50))
+    image_url = db.Column(db.String(300))
+
+class Feedback(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+    email = db.Column(db.String(100))
+    message = db.Column(db.Text)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+# --- ИНИЦИАЛИЗАЦИЯ БАЗЫ ---
+with app.app_context():
+    db.create_all()
+    if not User.query.filter_by(username='admin').first():
+        admin = User(username='admin', password='admin123', is_admin=True)
+        db.session.add(admin)
+        db.session.commit()
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 # --- МАРШРУТЫ ---
 
 @app.route('/')
 def index():
-    user = request.args.get('user')
-    return render_template_string(PAGE_TEMPLATE, user=user)
+    services = Service.query.all()
+    return render_template('index.html', user=current_user, services=services)
 
-@app.route('/register', methods=['POST'])
+@app.route('/register', methods=['GET', 'POST'])
 def register():
-    username = request.form['username']
-    password = request.form['password']
-    
-    conn = sqlite3.connect('database.db')
-    c = conn.cursor()
-    try:
-        c.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, password))
-        conn.commit()
-        return redirect('/?user=' + username)
-    except sqlite3.IntegrityError:
-        flash('Такой логин уже существует!', 'error')
-        return redirect('/')
-    finally:
-        conn.close()
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        if User.query.filter_by(username=username).first():
+            flash('Логин занят!', 'danger')
+            return redirect(url_for('register'))
+        user = User(username=username, password=password)
+        db.session.add(user)
+        db.session.commit()
+        
+        # 📩 Уведомление в Telegram
+        msg = f"🆕 <b>Новый пользователь!</b>\n\n"
+        msg += f"👤 Логин: {username}\n"
+        msg += f"🕒 Дата: {user.created_at.strftime('%d.%m.%Y %H:%M')}"
+        send_telegram_message(msg)
+        
+        flash('Регистрация успешна! Войдите.', 'success')
+        return redirect(url_for('login'))
+    return render_template('register.html')
 
-@app.route('/login', methods=['POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    username = request.form['username']
-    password = request.form['password']
-    
-    conn = sqlite3.connect('database.db')
-    c = conn.cursor()
-    c.execute("SELECT * FROM users WHERE username=? AND password=?", (username, password))
-    user = c.fetchone()
-    conn.close()
-    
-    if user:
-        return redirect('/?user=' + username)
-    else:
-        flash('Неверный логин или пароль!', 'error')
-        return redirect('/')
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        user = User.query.filter_by(username=username, password=password).first()
+        if user:
+            login_user(user, remember=True)
+            return redirect(url_for('index'))
+        flash('Неверный логин или пароль', 'danger')
+    return render_template('login.html')
 
 @app.route('/logout')
+@login_required
 def logout():
-    return redirect('/')
+    logout_user()
+    return redirect(url_for('index'))
 
-@app.route('/place-order', methods=['POST'])
-def place_order():
+@app.route('/profile')
+@login_required
+def profile():
+    orders = Order.query.filter_by(user_id=current_user.id).all()
+    return render_template('profile.html', user=current_user, orders=orders)
+
+@app.route('/order', methods=['POST'])
+@login_required
+def order():
     service = request.form['service']
-    name = request.form['customer_name']
-    phone = request.form['customer_phone']
+    description = request.form['description']
+    order = Order(user_id=current_user.id, service=service, description=description)
+    db.session.add(order)
+    db.session.commit()
     
-    conn = sqlite3.connect('database.db')
-    c = conn.cursor()
-    c.execute("INSERT INTO orders (customer_name, customer_phone, service_type) VALUES (?, ?, ?)", 
-              (name, phone, service))
-    conn.commit()
-    conn.close()
+    # 📩 Уведомление в Telegram
+    msg = f"🆕 <b>Новый заказ!</b>\n\n"
+    msg += f"👤 Клиент: {current_user.username}\n"
+    msg += f"📦 Услуга: {service}\n"
+    msg += f"📝 Описание: {description}\n"
+    msg += f"🕒 Дата: {order.created_at.strftime('%d.%m.%Y %H:%M')}"
+    send_telegram_message(msg)
     
-    return """
-    <h1>✅ Заказ принят!</h1>
-    <p>Скоро с вами свяжутся.</p>
-    <a href='/'>На главную</a>
-    """
+    flash('Заказ отправлен!', 'success')
+    return redirect(url_for('profile'))
 
-@app.route('/orders')
-def orders():
-    conn = sqlite3.connect('database.db')
-    c = conn.cursor()
-    c.execute("SELECT * FROM orders ORDER BY order_date DESC")
-    all_orders = c.fetchall()
-    conn.close()
-    
-    html = '''
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Заказы</title>
-        <style>
-            body { font-family: Arial; background: #f0f2f5; padding: 40px; }
-            .container { max-width: 1000px; margin: 0 auto; background: white; padding: 30px; border-radius: 20px; }
-            h1 { color: #333; }
-            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-            th { background: #667eea; color: white; padding: 12px; text-align: left; }
-            td { padding: 12px; border-bottom: 1px solid #eee; }
-            .badge { background: #ffc107; padding: 4px 12px; border-radius: 20px; }
-            a { color: #667eea; text-decoration: none; display: inline-block; margin-top: 20px; }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <h1>📋 Заказы</h1>
-            <table>
-                <tr><th>ID</th><th>Услуга</th><th>Клиент</th><th>Телефон</th><th>Дата</th><th>Статус</th></tr>
-    '''
-    for order in all_orders:
-        html += f'''
-        <tr>
-            <td>{order[0]}</td>
-            <td>{order[3]}</td>
-            <td>{order[1]}</td>
-            <td>{order[2]}</td>
-            <td>{order[4][:16]}</td>
-            <td><span class="badge">{order[5]}</span></td>
-        </tr>
-        '''
-    html += '''
-            </table>
-            <a href="/">← На главную</a>
-        </div>
-    </body>
-    </html>
-    '''
-    return html
+@app.route('/feedback', methods=['GET', 'POST'])
+def feedback():
+    if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        message = request.form['message']
+        fb = Feedback(name=name, email=email, message=message)
+        db.session.add(fb)
+        db.session.commit()
+        
+        # 📩 Уведомление в Telegram
+        msg = f"💬 <b>Новое сообщение!</b>\n\n"
+        msg += f"👤 Имя: {name}\n"
+        msg += f"📧 Email: {email}\n"
+        msg += f"📝 Сообщение: {message}\n"
+        msg += f"🕒 Дата: {fb.created_at.strftime('%d.%m.%Y %H:%M')}"
+        send_telegram_message(msg)
+        
+        flash('Сообщение отправлено!', 'success')
+        return redirect(url_for('feedback'))
+    return render_template('feedback.html')
 
 @app.route('/admin')
-def admin():
-    return redirect('/orders')
+@login_required
+def admin_panel():
+    if not current_user.is_admin:
+        return "Доступ запрещён", 403
+    orders = Order.query.all()
+    services = Service.query.all()
+    feedbacks = Feedback.query.all()
+    return render_template('admin.html', orders=orders, services=services, feedbacks=feedbacks)
+
+@app.route('/admin/add_service', methods=['POST'])
+@login_required
+def add_service():
+    if not current_user.is_admin:
+        return "Доступ запрещён", 403
+    title = request.form['title']
+    description = request.form['description']
+    price = request.form['price']
+    image_url = request.form['image_url']
+    service = Service(title=title, description=description, price=price, image_url=image_url)
+    db.session.add(service)
+    db.session.commit()
+    flash('Услуга добавлена!', 'success')
+    return redirect(url_for('admin_panel'))
+
+@app.route('/admin/delete_service/<int:id>')
+@login_required
+def delete_service(id):
+    if not current_user.is_admin:
+        return "Доступ запрещён", 403
+    service = Service.query.get(id)
+    db.session.delete(service)
+    db.session.commit()
+    flash('Услуга удалена!', 'success')
+    return redirect(url_for('admin_panel'))
+
+@app.route('/admin/delete_order/<int:id>')
+@login_required
+def delete_order(id):
+    if not current_user.is_admin:
+        return "Доступ запрещён", 403
+    order = Order.query.get(id)
+    db.session.delete(order)
+    db.session.commit()
+    flash('Заказ удалён!', 'success')
+    return redirect(url_for('admin_panel'))
+
+@app.route('/map')
+def map():
+    return render_template('map.html')
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 8000))
-    app.run(debug=True, host='0.0.0.0', port=port)
+    app.run(debug=True, host='0.0.0.0', port=8000)
