@@ -18,7 +18,7 @@ def init_db():
 
 init_db()
 
-# --- HTML-шаблон
+# --- HTML-шаблон (главная страница)
 HTML_TEMPLATE = '''
 <!DOCTYPE html>
 <html>
@@ -69,6 +69,7 @@ HTML_TEMPLATE = '''
         a { color: #667eea; text-decoration: none; }
         a:hover { text-decoration: underline; }
         .logout { margin-top: 20px; display: inline-block; color: #dc3545; }
+        .admin-link { margin-top: 20px; display: inline-block; color: #28a745; }
     </style>
 </head>
 <body>
@@ -76,7 +77,8 @@ HTML_TEMPLATE = '''
         {% if user %}
             <h1>👋 Добро пожаловать, {{ user }}!</h1>
             <p style="margin: 20px 0; color: #555;">Вы успешно вошли в систему.</p>
-            <a href="/logout" class="logout">Выйти</a>
+            <a href="/logout" class="logout">Выйти</a><br>
+            <a href="/admin" class="admin-link">🔐 Админ-панель</a>
         {% else %}
             <h1>🚀 Добро пожаловать!</h1>
             
@@ -98,6 +100,88 @@ HTML_TEMPLATE = '''
 </body>
 </html>
 '''
+
+# --- Админ-панель (список пользователей)
+ADMIN_TEMPLATE = '''
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Админ-панель</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 600px;
+            text-align: center;
+        }
+        h1 { color: #333; margin-bottom: 20px; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th { background: #667eea; color: white; }
+        a { color: #667eea; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .back { margin-top: 20px; display: inline-block; }
+        .error { color: red; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>👑 Админ-панель</h1>
+        
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+        
+        <form action="/admin" method="POST">
+            <input type="password" name="admin_password" placeholder="Введите секретный пароль" style="width: 100%;">
+            <button type="submit">Войти в админку</button>
+        </form>
+        
+        {% if users %}
+            <h2>📋 Список пользователей</h2>
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>Логин</th>
+                    <th>Пароль</th>
+                </tr>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user[0] }}</td>
+                    <td>{{ user[1] }}</td>
+                    <td>{{ user[2] }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        {% endif %}
+        
+        <a href="/" class="back">← На главную</a>
+    </div>
+</body>
+</html>
+'''
+
+# --- Маршруты
 
 @app.route('/')
 def index():
@@ -139,6 +223,25 @@ def login():
 @app.route('/logout')
 def logout():
     return redirect('/')
+
+# --- Админ-панель
+@app.route('/admin', methods=['GET', 'POST'])
+def admin():
+    if request.method == 'POST':
+        admin_password = request.form.get('admin_password')
+        # Секретный пароль для входа в админку (можешь изменить)
+        if admin_password == 'admin123':
+            conn = sqlite3.connect('database.db')
+            c = conn.cursor()
+            c.execute("SELECT * FROM users")
+            users = c.fetchall()
+            conn.close()
+            return render_template_string(ADMIN_TEMPLATE, users=users, error=None)
+        else:
+            return render_template_string(ADMIN_TEMPLATE, users=None, error='❌ Неверный пароль!')
+    
+    # GET-запрос — показываем форму входа
+    return render_template_string(ADMIN_TEMPLATE, users=None, error=None)
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 8000))
