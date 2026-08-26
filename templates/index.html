@@ -162,6 +162,82 @@
             opacity: 0.9;
         }
 
+        /* ===== СЛАЙДЕР (КАРУСЕЛЬ) ===== */
+        .slider-section {
+            padding: 60px 0;
+            background: #fff;
+        }
+        .slider-section h2 {
+            text-align: center;
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+        .slider-section .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 18px;
+        }
+        .slider-container {
+            position: relative;
+            max-width: 1000px;
+            margin: 0 auto;
+            overflow: hidden;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+        }
+        .slider-track {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+        .slider-slide {
+            min-width: 100%;
+            padding: 40px 60px;
+            background: #f8f9fc;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .slider-slide img {
+            max-width: 100%;
+            max-height: 350px;
+            border-radius: 16px;
+            object-fit: cover;
+            margin-bottom: 20px;
+        }
+        .slider-slide h3 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .slider-slide p {
+            color: #555;
+            max-width: 600px;
+        }
+        .slider-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transition: 0.3s;
+            z-index: 10;
+        }
+        .slider-btn:hover {
+            background: #6c63ff;
+            color: white;
+        }
+        .slider-btn.prev { left: 20px; }
+        .slider-btn.next { right: 20px; }
+
         /* ===== УСЛУГИ ===== */
         .services {
             padding: 80px 0;
@@ -235,10 +311,60 @@
             transform: scale(1.02);
         }
 
+        /* ===== ПОРТФОЛИО (СЕТКА) ===== */
+        .portfolio {
+            padding: 80px 0;
+            background: #f8f9fc;
+        }
+        .portfolio h2 {
+            text-align: center;
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+        .portfolio .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 18px;
+        }
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+        .portfolio-item {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .portfolio-item:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        .portfolio-item img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+        }
+        .portfolio-item .info {
+            padding: 20px;
+        }
+        .portfolio-item .info h4 {
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        .portfolio-item .info p {
+            color: #666;
+            font-size: 14px;
+        }
+
         /* ===== О НАС ===== */
         .about {
             padding: 80px 0;
-            background: #f8f9fc;
+            background: white;
         }
         .about .container {
             display: grid;
@@ -275,7 +401,7 @@
         /* ===== ФОРМА ОБРАТНОЙ СВЯЗИ ===== */
         .feedback {
             padding: 80px 0;
-            background: white;
+            background: #f8f9fc;
         }
         .feedback .container {
             max-width: 600px;
@@ -354,6 +480,7 @@
             }
             .hero .stat {
                 justify-content: center;
+                flex-wrap: wrap;
             }
             .about .container {
                 grid-template-columns: 1fr;
@@ -366,7 +493,11 @@
             .hero h1 {
                 font-size: 32px;
             }
-            .services h2 {
+            .services h2,
+            .slider-section h2,
+            .portfolio h2,
+            .about h2,
+            .feedback h2 {
                 font-size: 28px;
             }
             .navbar .container {
@@ -376,6 +507,19 @@
             .nav-links {
                 justify-content: center;
             }
+            .slider-slide {
+                padding: 20px;
+            }
+            .slider-slide img {
+                max-height: 200px;
+            }
+            .slider-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
+            }
+            .slider-btn.prev { left: 10px; }
+            .slider-btn.next { right: 10px; }
         }
     </style>
 </head>
@@ -388,9 +532,10 @@
             <img src="/static/logo.png" alt="MYSTUDIO">
         </a>
         <div class="nav-links">
-            <a href="#services">Услуги</a>
-            <a href="#about">О нас</a>
-            <a href="#feedback">Контакты</a>
+            <a href="/#slider">Работы</a>
+            <a href="/#services">Услуги</a>
+            <a href="/#about">О нас</a>
+            <a href="/contact">Контакты</a>
             {% if current_user.is_authenticated %}
                 <span class="user-greeting">👋 {{ current_user.username }}</span>
                 <a href="/profile"><i class="fas fa-user"></i> Профиль</a>
@@ -410,7 +555,7 @@
         <div>
             <h1>Разрабатываем <br><span>бренды, которые работают</span></h1>
             <p>Брендбук, айдентика, фирменный стиль и дизайн под ключ для вашего бизнеса.</p>
-            <a href="#feedback" class="btn-hero">Заказать консультацию</a>
+            <a href="/contact" class="btn-hero">Заказать консультацию</a>
             <div class="stat">
                 <div class="stat-item"><strong>5+</strong> лет опыта</div>
                 <div class="stat-item"><strong>100+</strong> проектов</div>
@@ -419,6 +564,36 @@
         </div>
         <div class="hero-image">
             🚀
+        </div>
+    </div>
+</section>
+
+<!-- ===== СЛАЙДЕР ===== -->
+<section class="slider-section" id="slider">
+    <div class="container">
+        <h2>Наши работы</h2>
+        <p class="subtitle">Примеры проектов, которые мы создали для наших клиентов</p>
+        <div class="slider-container">
+            <div class="slider-track" id="sliderTrack">
+                {% if works %}
+                    {% for work in works %}
+                    <div class="slider-slide">
+                        <img src="{{ work.image_url or 'https://via.placeholder.com/800x400?text=Проект' }}" alt="{{ work.title }}">
+                        <h3>{{ work.title }}</h3>
+                        <p>{{ work.description }}</p>
+                        {% if work.link %}<a href="{{ work.link }}" target="_blank" class="btn btn-primary" style="display:inline-block; margin-top:15px; padding:10px 30px; border-radius:30px; background:#6c63ff; color:white;">Посмотреть проект</a>{% endif %}
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="slider-slide">
+                        <img src="https://via.placeholder.com/800x400?text=Добавьте+работы+в+админке" alt="Нет работ">
+                        <h3>Добавьте свои работы</h3>
+                        <p>Зайдите в админ-панель и добавьте проекты в раздел "Портфолио"</p>
+                    </div>
+                {% endif %}
+            </div>
+            <button class="slider-btn prev" onclick="slidePrev()">‹</button>
+            <button class="slider-btn next" onclick="slideNext()">›</button>
         </div>
     </div>
 </section>
@@ -451,6 +626,36 @@
                 </form>
             </div>
             {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- ===== ПОРТФОЛИО ===== -->
+<section class="portfolio" id="portfolio">
+    <div class="container">
+        <h2>Портфолио</h2>
+        <p class="subtitle">Наши проекты в разных сферах</p>
+        <div class="portfolio-grid">
+            {% if works %}
+                {% for work in works %}
+                <div class="portfolio-item">
+                    <img src="{{ work.image_url or 'https://via.placeholder.com/400x250?text=Проект' }}" alt="{{ work.title }}">
+                    <div class="info">
+                        <h4>{{ work.title }}</h4>
+                        <p>{{ work.description }}</p>
+                        {% if work.link %}<a href="{{ work.link }}" target="_blank" style="color:#6c63ff;">Смотреть проект →</a>{% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="portfolio-item">
+                    <img src="https://via.placeholder.com/400x250?text=Добавьте+работу" alt="Нет работ">
+                    <div class="info">
+                        <h4>Нет добавленных работ</h4>
+                        <p>Зайдите в админ-панель и добавьте свои проекты</p>
+                    </div>
+                </div>
+            {% endif %}
         </div>
     </div>
 </section>
@@ -495,8 +700,41 @@
         <a href="#"><i class="fab fa-youtube"></i></a>
         <a href="#"><i class="fab fa-github"></i></a>
     </div>
-    <p>© 2026 MYSTUDIO. Все права защищены. Сделано с ❤️ и заботой о вашем бизнесе.</p>
+    <p>© 2026 MYSTUDIO. Все права защищены.</p>
 </footer>
+
+<!-- ===== СКРИПТ СЛАЙДЕРА ===== -->
+<script>
+    let currentSlide = 0;
+    const track = document.getElementById('sliderTrack');
+    const slides = track ? track.querySelectorAll('.slider-slide') : [];
+    const totalSlides = slides.length;
+
+    function updateSlider() {
+        if (!track || totalSlides === 0) return;
+        track.style.transform = `translateX(-${currentSlide * 100}%)`;
+    }
+
+    function slideNext() {
+        if (totalSlides === 0) return;
+        currentSlide = (currentSlide + 1) % totalSlides;
+        updateSlider();
+    }
+
+    function slidePrev() {
+        if (totalSlides === 0) return;
+        currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+        updateSlider();
+    }
+
+    // Автоматическая прокрутка каждые 4 секунды
+    if (totalSlides > 1) {
+        setInterval(slideNext, 4000);
+    }
+
+    // Инициализация
+    updateSlider();
+</script>
 
 </body>
 </html>
