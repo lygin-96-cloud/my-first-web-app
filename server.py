@@ -1,56 +1,46 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory
+from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 import os
 import requests
-from datetime import datetime
+from datetime import datetime, timedelta
+import random
+import string
 
 app = Flask(__name__)
 app.secret_key = 'super-secret-key-12345'
 
-# --- НАСТРОЙКА БАЗЫ ДАННЫХ ---
+# --- БАЗА ДАННЫХ ---
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-# --- НАСТРОЙКА АВТОРИЗАЦИИ ---
+# --- АВТОРИЗАЦИЯ ---
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-# --- НАСТРОЙКИ TELEGRAM (УЖЕ С ТВОИМИ ДАННЫМИ) ---
-BOT_TOKEN = "8619987825:AAFfRaJ-endW8YTZPYgZ3PH8f6geTnZU3Ho"
-CHAT_ID = "1099656613"
+# --- TELEGRAM НАСТРОЙКИ ---
+BOT_TOKEN = "ТВОЙ_ТОКЕН"  # 👈 Вставь сюда токен
+CHAT_ID = "ТВОЙ_CHAT_ID"  # 👈 Вставь сюда ID
 
 def send_telegram(message):
-    """Отправляет сообщение в Telegram"""
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
-    data = {
-        "chat_id": CHAT_ID,
-        "text": message,
-        "parse_mode": "HTML"
-    }
+    data = {"chat_id": CHAT_ID, "text": message, "parse_mode": "HTML"}
     try:
-        response = requests.post(url, data=data)
-        if response.status_code != 200:
-            print(f"Ошибка отправки в Telegram: {response.text}")
+        requests.post(url, data=data)
     except Exception as e:
-        print(f"Исключение при отправке в Telegram: {e}")
+        print("Ошибка отправки в Telegram:", e)
 
 # --- МОДЕЛИ БАЗЫ ДАННЫХ ---
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=True)
     password = db.Column(db.String(120), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
-class Service(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(200), nullable=False)
-    description = db.Column(db.Text)
-    price = db.Column(db.String(50))
-    image_url = db.Column(db.String(300))
+    reset_token = db.Column(db.String(100), nullable=True)
 
 class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -60,10 +50,25 @@ class Order(db.Model):
     status = db.Column(db.String(50), default='Новый')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-class Feedback(db.Model):
+class Service(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text)
+    price = db.Column(db.String(50))
+    image_url = db.Column(db.String(300))
+
+class Work(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text)
+    image_url = db.Column(db.String(300))
+    link = db.Column(db.String(300))
+
+class Contact(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
     email = db.Column(db.String(100))
+    phone = db.Column(db.String(20))
     message = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -71,40 +76,70 @@ class Feedback(db.Model):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# --- СОЗДАНИЕ БАЗЫ ДАННЫХ И АДМИНА ---
+# --- СОЗДАНИЕ БАЗЫ И АДМИНА ---
 with app.app_context():
     db.create_all()
     if not User.query.filter_by(username='admin').first():
         admin = User(username='admin', password='admin123', is_admin=True)
         db.session.add(admin)
         db.session.commit()
-        print("Админ создан: admin / admin123")
 
 # --- МАРШРУТЫ ---
-
 @app.route('/')
 def index():
     services = Service.query.all()
-    return render_template('index.html', user=current_user, services=services)
+    works = Work.query.all()
+    return render_template('index.html', user=current_user, services=services, works=works)
+
+@app.route('/works')
+def works():
+    works = Work.query.all()
+    return render_template('works.html', user=current_user, works=works)
+
+@app.route('/contact', methods=['GET', 'POST'])
+def contact():
+    if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        phone = request.form['phone']
+        message = request.form['message']
+        
+        contact = Contact(name=name, email=email, phone=phone, message=message)
+        db.session.add(contact)
+        db.session.commit()
+        
+        # Уведомление в Telegram
+        msg = f"📩 <b>Новое сообщение с сайта</b>\n\n"
+        msg += f"👤 Имя: {name}\n"
+        msg += f"📧 Email: {email}\n"
+        msg += f"📞 Телефон: {phone}\n"
+        msg += f"📝 Сообщение: {message}\n"
+        msg += f"🕒 Дата: {contact.created_at.strftime('%d.%m.%Y %H:%M')}"
+        send_telegram(msg)
+        
+        flash('Сообщение отправлено! Мы свяжемся с вами в ближайшее время.', 'success')
+        return redirect(url_for('contact'))
+    return render_template('contact.html', user=current_user)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
         username = request.form['username']
+        email = request.form.get('email', '')
         password = request.form['password']
         if User.query.filter_by(username=username).first():
             flash('Логин занят!', 'danger')
             return redirect(url_for('register'))
-        user = User(username=username, password=password)
+        user = User(username=username, email=email, password=password)
         db.session.add(user)
         db.session.commit()
-
-        # 📩 Уведомление в Telegram
+        
         msg = f"🆕 <b>Новый пользователь!</b>\n\n"
         msg += f"👤 Логин: {username}\n"
-        msg += f"🕒 Дата: {datetime.now().strftime('%d.%m.%Y %H:%M')}"
+        msg += f"📧 Email: {email}\n"
+        msg += f"🕒 Дата: {user.created_at.strftime('%d.%m.%Y %H:%M')}"
         send_telegram(msg)
-
+        
         flash('Регистрация успешна! Войдите.', 'success')
         return redirect(url_for('login'))
     return render_template('register.html')
@@ -141,41 +176,17 @@ def order():
     order = Order(user_id=current_user.id, service=service, description=description)
     db.session.add(order)
     db.session.commit()
-
-    # 📩 Уведомление в Telegram
+    
     msg = f"🆕 <b>Новый заказ!</b>\n\n"
     msg += f"👤 Клиент: {current_user.username}\n"
     msg += f"📦 Услуга: {service}\n"
     msg += f"📝 Описание: {description}\n"
     msg += f"🕒 Дата: {order.created_at.strftime('%d.%m.%Y %H:%M')}"
     send_telegram(msg)
-
+    
     flash('Заказ отправлен!', 'success')
     return redirect(url_for('profile'))
 
-@app.route('/feedback', methods=['GET', 'POST'])
-def feedback():
-    if request.method == 'POST':
-        name = request.form['name']
-        email = request.form['email']
-        message = request.form['message']
-        fb = Feedback(name=name, email=email, message=message)
-        db.session.add(fb)
-        db.session.commit()
-
-        # 📩 Уведомление в Telegram
-        msg = f"💬 <b>Новое сообщение!</b>\n\n"
-        msg += f"👤 Имя: {name}\n"
-        msg += f"📧 Email: {email}\n"
-        msg += f"📝 Сообщение: {message}\n"
-        msg += f"🕒 Дата: {datetime.now().strftime('%d.%m.%Y %H:%M')}"
-        send_telegram(msg)
-
-        flash('Сообщение отправлено!', 'success')
-        return redirect(url_for('feedback'))
-    return render_template('feedback.html')
-
-# --- АДМИН-ПАНЕЛЬ ---
 @app.route('/admin')
 @login_required
 def admin_panel():
@@ -183,7 +194,9 @@ def admin_panel():
         return "Доступ запрещён", 403
     services = Service.query.all()
     orders = Order.query.all()
-    return render_template('admin.html', services=services, orders=orders)
+    works = Work.query.all()
+    contacts = Contact.query.all()
+    return render_template('admin.html', services=services, orders=orders, works=works, contacts=contacts)
 
 @app.route('/admin/add_service', methods=['POST'])
 @login_required
@@ -227,6 +240,32 @@ def delete_service(id):
     flash('Услуга удалена!', 'success')
     return redirect(url_for('admin_panel'))
 
+@app.route('/admin/add_work', methods=['POST'])
+@login_required
+def add_work():
+    if not current_user.is_admin:
+        return "Доступ запрещён", 403
+    title = request.form['title']
+    description = request.form['description']
+    image_url = request.form['image_url']
+    link = request.form['link']
+    work = Work(title=title, description=description, image_url=image_url, link=link)
+    db.session.add(work)
+    db.session.commit()
+    flash('Работа добавлена!', 'success')
+    return redirect(url_for('admin_panel'))
+
+@app.route('/admin/delete_work/<int:id>')
+@login_required
+def delete_work(id):
+    if not current_user.is_admin:
+        return "Доступ запрещён", 403
+    work = Work.query.get(id)
+    db.session.delete(work)
+    db.session.commit()
+    flash('Работа удалена!', 'success')
+    return redirect(url_for('admin_panel'))
+
 @app.route('/admin/order/<int:id>/status', methods=['POST'])
 @login_required
 def update_order_status(id):
@@ -238,9 +277,39 @@ def update_order_status(id):
     flash('Статус заказа обновлён!', 'success')
     return redirect(url_for('admin_panel'))
 
-@app.route('/map')
-def map():
-    return render_template('map.html')
+@app.route('/forgot-password', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        username = request.form['username']
+        user = User.query.filter_by(username=username).first()
+        if user:
+            token = ''.join(random.choices(string.ascii_letters + string.digits, k=20))
+            user.reset_token = token
+            db.session.commit()
+            flash('Ссылка для восстановления отправлена в Telegram', 'success')
+            msg = f"🔐 <b>Восстановление пароля</b>\n\n"
+            msg += f"👤 Логин: {user.username}\n"
+            msg += f"🔑 Токен: {token}\n"
+            msg += f"Перейдите по ссылке: https://my-first-web-app-hiif.onrender.com/reset-password/{token}"
+            send_telegram(msg)
+            return redirect(url_for('login'))
+        flash('Пользователь не найден', 'danger')
+    return render_template('forgot_password.html')
+
+@app.route('/reset-password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    user = User.query.filter_by(reset_token=token).first()
+    if not user:
+        flash('Неверная ссылка', 'danger')
+        return redirect(url_for('login'))
+    if request.method == 'POST':
+        new_password = request.form['password']
+        user.password = new_password
+        user.reset_token = None
+        db.session.commit()
+        flash('Пароль обновлён! Войдите.', 'success')
+        return redirect(url_for('login'))
+    return render_template('reset_password.html')
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 8000))
