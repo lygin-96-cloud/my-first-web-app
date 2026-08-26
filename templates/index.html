@@ -3,78 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MYSTUDIO | Премиум-сервис</title>
+    <title>MYSTUDIO | Разработка брендов</title>
 
     <!-- Font Awesome (иконки) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
 
     <style>
         /* ===== ГЛОБАЛЬНЫЕ СТИЛИ ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', sans-serif;
-            background: #0b0b1a;
-            color: white;
-            overflow-x: hidden;
+            background: #f8f9fc;
+            color: #1a1a2e;
+            line-height: 1.6;
         }
-
-        /* ===== АНИМИРОВАННЫЙ ФОН ===== */
-        .bg-animation {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
-            background: linear-gradient(135deg, #0b0b1a 0%, #1a1a3e 25%, #2d1b69 50%, #1a1a3e 75%, #0b0b1a 100%);
-            background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
-        }
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        /* Плавающие частицы */
-        .particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            overflow: hidden;
-        }
-        .particle {
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.05);
-            animation: floatUp linear infinite;
-        }
-        .particle:nth-child(1) { width: 80px; height: 80px; left: 10%; animation-duration: 20s; }
-        .particle:nth-child(2) { width: 120px; height: 120px; left: 30%; animation-duration: 25s; animation-delay: 2s; }
-        .particle:nth-child(3) { width: 60px; height: 60px; left: 60%; animation-duration: 18s; animation-delay: 4s; }
-        .particle:nth-child(4) { width: 100px; height: 100px; left: 80%; animation-duration: 22s; animation-delay: 1s; }
-        .particle:nth-child(5) { width: 140px; height: 140px; left: 45%; animation-duration: 28s; animation-delay: 3s; }
-        @keyframes floatUp {
-            0% { bottom: -200px; opacity: 0; transform: scale(0.5) rotate(0deg); }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { bottom: 110%; opacity: 0; transform: scale(1.2) rotate(720deg); }
+        a { text-decoration: none; color: inherit; }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
         }
 
         /* ===== ШАПКА ===== */
         .navbar {
-            padding: 15px 50px;
-            background: rgba(11, 11, 26, 0.7);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding: 18px 0;
+            background: white;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
             position: sticky;
             top: 0;
-            z-index: 100;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+        .navbar .container {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -82,117 +44,158 @@
             gap: 15px;
         }
         .navbar-brand img {
-            height: 40px;
+            height: 45px;
             width: auto;
             display: block;
         }
         .nav-links {
             display: flex;
             align-items: center;
+            gap: 20px;
             flex-wrap: wrap;
-            gap: 10px;
         }
         .nav-links a {
-            color: rgba(255,255,255,0.7);
-            text-decoration: none;
-            padding: 8px 16px;
-            border-radius: 30px;
-            transition: 0.3s;
-            font-weight: 500;
             font-size: 14px;
+            font-weight: 500;
+            color: #1a1a2e;
+            transition: 0.3s;
+            padding: 8px 0;
+            border-bottom: 2px solid transparent;
         }
         .nav-links a:hover {
-            background: rgba(255,255,255,0.1);
-            color: white;
-            transform: translateY(-2px);
+            color: #6c63ff;
+            border-bottom-color: #6c63ff;
         }
-        .nav-links .btn-primary-custom {
-            background: linear-gradient(135deg, #a855f7, #6366f1);
-            border: none;
-            padding: 10px 25px;
+        .nav-links .btn-primary {
+            background: #6c63ff;
+            color: white !important;
+            padding: 10px 24px;
             border-radius: 30px;
-            color: white;
             font-weight: 600;
+            border: none;
             transition: 0.3s;
-            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+            box-shadow: 0 4px 15px rgba(108, 99, 255, 0.3);
         }
-        .nav-links .btn-primary-custom:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.5);
+        .nav-links .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(108, 99, 255, 0.4);
+            border-bottom-color: transparent;
+        }
+        .nav-links .btn-outline {
+            border: 1px solid #ddd;
+            padding: 10px 24px;
+            border-radius: 30px;
+            font-weight: 500;
+            transition: 0.3s;
+        }
+        .nav-links .btn-outline:hover {
+            border-color: #6c63ff;
+            background: #f0f0ff;
         }
         .user-greeting {
-            color: rgba(255,255,255,0.8);
-            font-weight: 500;
+            font-weight: 600;
+            color: #6c63ff;
         }
 
         /* ===== ГЕРОЙ ===== */
         .hero {
-            text-align: center;
-            padding: 80px 20px 60px;
+            padding: 80px 0 60px;
+            background: linear-gradient(135deg, #f8f9fc 0%, #eef0ff 100%);
+        }
+        .hero .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
         }
         .hero h1 {
-            font-size: 64px;
-            font-weight: 800;
+            font-size: 48px;
+            font-weight: 900;
             line-height: 1.1;
             margin-bottom: 20px;
-            background: linear-gradient(135deg, #ffffff 0%, #a855f7 50%, #6366f1 100%);
+            color: #1a1a2e;
+        }
+        .hero h1 span {
+            background: linear-gradient(135deg, #6c63ff, #3b82f6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: fadeInDown 1s ease;
-        }
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-40px); }
-            to { opacity: 1; transform: translateY(0); }
         }
         .hero p {
-            font-size: 20px;
-            color: rgba(255,255,255,0.6);
-            max-width: 600px;
-            margin: 0 auto 40px;
-            animation: fadeInUp 1s ease 0.3s both;
-        }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .hero .badge-premium {
-            display: inline-block;
-            background: rgba(168, 85, 247, 0.2);
-            border: 1px solid rgba(168, 85, 247, 0.3);
-            padding: 6px 20px;
-            border-radius: 30px;
-            font-size: 12px;
-            color: #a855f7;
-            font-weight: 600;
+            font-size: 18px;
+            color: #555;
             margin-bottom: 30px;
+            max-width: 500px;
+        }
+        .hero .btn-hero {
+            background: #6c63ff;
+            color: white;
+            padding: 14px 40px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 16px;
+            border: none;
+            transition: 0.3s;
+            box-shadow: 0 4px 20px rgba(108, 99, 255, 0.4);
+            display: inline-block;
+        }
+        .hero .btn-hero:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(108, 99, 255, 0.5);
+        }
+        .hero .stat {
+            display: flex;
+            gap: 40px;
+            margin-top: 30px;
+        }
+        .hero .stat-item {
+            font-size: 14px;
+            color: #555;
+        }
+        .hero .stat-item strong {
+            font-size: 24px;
+            color: #1a1a2e;
+            display: block;
+        }
+        .hero-image {
+            text-align: center;
+            font-size: 120px;
+            opacity: 0.9;
         }
 
         /* ===== УСЛУГИ ===== */
-        .services-section {
-            padding: 40px 20px 60px;
-            max-width: 1200px;
-            margin: 0 auto;
+        .services {
+            padding: 80px 0;
+            background: white;
+        }
+        .services h2 {
+            text-align: center;
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 15px;
+        }
+        .services .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 50px;
+            font-size: 18px;
         }
         .services-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 30px;
         }
         .service-card {
-            background: rgba(255,255,255,0.03);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 24px;
+            background: #f8f9fc;
             padding: 35px 30px;
+            border-radius: 24px;
+            transition: 0.4s;
+            border: 1px solid transparent;
             text-align: center;
-            transition: 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-            position: relative;
-            overflow: hidden;
         }
         .service-card:hover {
-            transform: translateY(-12px) scale(1.02);
-            border-color: rgba(168, 85, 247, 0.3);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+            transform: translateY(-8px);
+            border-color: #6c63ff;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.05);
         }
         .service-card .icon {
             font-size: 48px;
@@ -205,114 +208,242 @@
             margin-bottom: 10px;
         }
         .service-card p {
-            color: rgba(255,255,255,0.6);
+            color: #666;
             font-size: 15px;
-            line-height: 1.6;
             margin-bottom: 15px;
         }
-        .service-card .price-tag {
-            font-size: 28px;
+        .service-card .price {
+            font-size: 26px;
             font-weight: 800;
-            background: linear-gradient(135deg, #a855f7, #6366f1);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #6c63ff;
             margin-bottom: 20px;
             display: block;
         }
         .service-card .btn-order {
-            background: linear-gradient(135deg, #a855f7, #6366f1);
+            background: #6c63ff;
+            color: white;
             border: none;
             padding: 12px 30px;
-            border-radius: 30px;
-            color: white;
+            border-radius: 40px;
             font-weight: 600;
             transition: 0.3s;
             width: 100%;
             cursor: pointer;
         }
         .service-card .btn-order:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
+            background: #5a52d5;
+            transform: scale(1.02);
+        }
+
+        /* ===== О НАС ===== */
+        .about {
+            padding: 80px 0;
+            background: #f8f9fc;
+        }
+        .about .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+        }
+        .about h2 {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+        .about p {
+            color: #555;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        .about .features {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .about .feature {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .about .feature i {
+            color: #6c63ff;
+            font-size: 20px;
+        }
+
+        /* ===== ФОРМА ОБРАТНОЙ СВЯЗИ ===== */
+        .feedback {
+            padding: 80px 0;
+            background: white;
+        }
+        .feedback .container {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .feedback h2 {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+        .feedback p {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .feedback form input,
+        .feedback form textarea {
+            width: 100%;
+            padding: 14px 18px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: 0.3s;
+            font-family: inherit;
+        }
+        .feedback form input:focus,
+        .feedback form textarea:focus {
+            border-color: #6c63ff;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(108, 99, 255, 0.1);
+        }
+        .feedback form button {
+            background: #6c63ff;
+            color: white;
+            border: none;
+            padding: 14px 40px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: 0.3s;
+            cursor: pointer;
+            width: 100%;
+        }
+        .feedback form button:hover {
+            background: #5a52d5;
+            transform: scale(1.02);
         }
 
         /* ===== ФУТЕР ===== */
         footer {
+            padding: 40px 0;
+            background: #1a1a2e;
+            color: rgba(255,255,255,0.6);
             text-align: center;
-            padding: 40px 20px;
-            border-top: 1px solid rgba(255,255,255,0.05);
-            color: rgba(255,255,255,0.3);
-            font-size: 14px;
         }
         footer .social-links a {
-            color: rgba(255,255,255,0.3);
+            color: rgba(255,255,255,0.4);
             margin: 0 12px;
             font-size: 20px;
             transition: 0.3s;
         }
-        footer .social-links a:hover { color: white; }
+        footer .social-links a:hover {
+            color: white;
+        }
+        footer p {
+            margin-top: 15px;
+            font-size: 14px;
+        }
 
         /* ===== АДАПТИВНОСТЬ ===== */
         @media (max-width: 768px) {
-            .navbar { padding: 15px 20px; flex-direction: column; align-items: stretch; }
-            .nav-links { justify-content: center; }
-            .hero h1 { font-size: 36px; }
-            .hero p { font-size: 16px; }
-            .services-grid { grid-template-columns: 1fr; }
+            .hero .container {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            .hero .stat {
+                justify-content: center;
+            }
+            .about .container {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            .about .features {
+                grid-template-columns: 1fr;
+                justify-items: center;
+            }
+            .hero h1 {
+                font-size: 32px;
+            }
+            .services h2 {
+                font-size: 28px;
+            }
+            .navbar .container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .nav-links {
+                justify-content: center;
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- Анимированный фон -->
-    <div class="bg-animation"></div>
-    <div class="particles">
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-    </div>
-
-    <!-- ===== ШАПКА ===== -->
-    <nav class="navbar">
+<!-- ===== ШАПКА ===== -->
+<nav class="navbar">
+    <div class="container">
         <a class="navbar-brand" href="/">
             <img src="/static/logo.png" alt="MYSTUDIO">
         </a>
         <div class="nav-links">
+            <a href="#services">Услуги</a>
+            <a href="#about">О нас</a>
+            <a href="#feedback">Контакты</a>
             {% if current_user.is_authenticated %}
                 <span class="user-greeting">👋 {{ current_user.username }}</span>
                 <a href="/profile"><i class="fas fa-user"></i> Профиль</a>
                 {% if current_user.is_admin %}<a href="/admin"><i class="fas fa-crown"></i> Админ</a>{% endif %}
-                <a href="/logout" style="color: #f87171;"><i class="fas fa-sign-out-alt"></i> Выйти</a>
+                <a href="/logout" style="color: #e74c3c;"><i class="fas fa-sign-out-alt"></i> Выйти</a>
             {% else %}
-                <a href="/login"><i class="fas fa-sign-in-alt"></i> Войти</a>
-                <a href="/register" class="btn-primary-custom"><i class="fas fa-user-plus"></i> Регистрация</a>
+                <a href="/login" class="btn-outline">Войти</a>
+                <a href="/register" class="btn-primary">Регистрация</a>
             {% endif %}
         </div>
-    </nav>
-
-    <!-- ===== ГЕРОЙ ===== -->
-    <div class="hero">
-        <div class="badge-premium">✦ ПРЕМИУМ-СЕРВИС</div>
-        <h1>Создаём <br>цифровой успех</h1>
-        <p>Разработка сайтов, дизайн и маркетинг — <br>всё в одной экосистеме для вашего бизнеса.</p>
     </div>
+</nav>
 
-    <!-- ===== УСЛУГИ ===== -->
-    <div class="services-section">
+<!-- ===== ГЕРОЙ ===== -->
+<section class="hero">
+    <div class="container">
+        <div>
+            <h1>Разрабатываем <br><span>бренды, которые работают</span></h1>
+            <p>Брендбук, айдентика, фирменный стиль и дизайн под ключ для вашего бизнеса.</p>
+            <a href="#feedback" class="btn-hero">Заказать консультацию</a>
+            <div class="stat">
+                <div class="stat-item"><strong>5+</strong> лет опыта</div>
+                <div class="stat-item"><strong>100+</strong> проектов</div>
+                <div class="stat-item"><strong>98%</strong> довольных клиентов</div>
+            </div>
+        </div>
+        <div class="hero-image">
+            🚀
+        </div>
+    </div>
+</section>
+
+<!-- ===== УСЛУГИ ===== -->
+<section class="services" id="services">
+    <div class="container">
+        <h2>Наши услуги</h2>
+        <p class="subtitle">Создаём визуальные концепции, которые решают бизнес-задачи</p>
         <div class="services-grid">
             {% for service in services %}
             <div class="service-card">
                 <span class="icon">
-                    {% if 'SMM' in service.title %}📱
+                    {% if 'Брендбук' in service.title %}📘
+                    {% elif 'Фирменный стиль' in service.title %}🎨
+                    {% elif 'Айдентика' in service.title %}✨
+                    {% elif 'Дизайн' in service.title %}🖌️
+                    {% elif 'SMM' in service.title %}📱
                     {% elif 'Сайт' in service.title %}🌐
-                    {% elif 'Дизайн' in service.title %}🎨
                     {% else %}⚡
                     {% endif %}
                 </span>
                 <h3>{{ service.title }}</h3>
                 <p>{{ service.description }}</p>
-                <span class="price-tag">{{ service.price }}</span>
+                <span class="price">{{ service.price }}</span>
                 <form action="/order" method="POST">
                     <input type="hidden" name="service" value="{{ service.title }}">
                     <input type="hidden" name="description" value="{{ service.description }}">
@@ -322,17 +453,50 @@
             {% endfor %}
         </div>
     </div>
+</section>
 
-    <!-- ===== ФУТЕР ===== -->
-    <footer>
-        <div class="social-links">
-            <a href="#"><i class="fab fa-telegram"></i></a>
-            <a href="#"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fab fa-youtube"></i></a>
-            <a href="#"><i class="fab fa-github"></i></a>
+<!-- ===== О НАС ===== -->
+<section class="about" id="about">
+    <div class="container">
+        <div>
+            <h2>Кто мы и почему нам доверяют</h2>
+            <p>MYSTUDIO — это команда дизайнеров, маркетологов и разработчиков. Мы создаём не просто красивые картинки, а эффективные инструменты для бизнеса.</p>
+            <p>Наш подход — сочетание креативности и стратегии. Каждый проект начинается с анализа целевой аудитории и конкурентов.</p>
+            <div class="features">
+                <div class="feature"><i class="fas fa-check-circle"></i> Индивидуальный подход</div>
+                <div class="feature"><i class="fas fa-check-circle"></i> Фиксированные цены</div>
+                <div class="feature"><i class="fas fa-check-circle"></i> Соблюдение сроков</div>
+                <div class="feature"><i class="fas fa-check-circle"></i> Полное сопровождение</div>
+            </div>
         </div>
-        <p>© 2026 MYSTUDIO. Все права защищены.</p>
-    </footer>
+        <div style="text-align: center; font-size: 120px; opacity: 0.3;">⭐</div>
+    </div>
+</section>
+
+<!-- ===== ФОРМА ОБРАТНОЙ СВЯЗИ ===== -->
+<section class="feedback" id="feedback">
+    <div class="container">
+        <h2>📩 Свяжитесь с нами</h2>
+        <p>Оставьте заявку, и мы перезвоним вам в течение 15 минут</p>
+        <form action="/feedback" method="POST">
+            <input type="text" name="name" placeholder="Ваше имя" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <textarea name="message" rows="4" placeholder="Опишите задачу" required></textarea>
+            <button type="submit"><i class="fas fa-paper-plane"></i> Отправить</button>
+        </form>
+    </div>
+</section>
+
+<!-- ===== ФУТЕР ===== -->
+<footer>
+    <div class="social-links">
+        <a href="#"><i class="fab fa-telegram"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-youtube"></i></a>
+        <a href="#"><i class="fab fa-github"></i></a>
+    </div>
+    <p>© 2026 MYSTUDIO. Все права защищены. Сделано с ❤️ и заботой о вашем бизнесе.</p>
+</footer>
 
 </body>
 </html>
