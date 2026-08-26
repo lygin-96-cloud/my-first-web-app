@@ -156,5 +156,5 @@ def logout():
     return redirect('/')
 
 if __name__ == '__main__':
-    app.run(debug=True, port=8000)
-    app.run(debug=True, port=8000)
+==> Running 'python server.py'
+* Running on http://0.0.0.0:8000
