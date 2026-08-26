@@ -18,7 +18,7 @@ def init_db():
 
 init_db()
 
-# --- HTML-шаблон (встроенный)
+# --- HTML-шаблон
 HTML_TEMPLATE = '''
 <!DOCTYPE html>
 <html>
@@ -66,16 +66,9 @@ HTML_TEMPLATE = '''
             transition: 0.3s;
         }
         button:hover { background: #5a67d8; }
-        .message {
-            padding: 12px;
-            border-radius: 8px;
-            margin: 10px 0;
-        }
-        .success { background: #d4edda; color: #155724; }
-        .error { background: #f8d7da; color: #721c24; }
         a { color: #667eea; text-decoration: none; }
         a:hover { text-decoration: underline; }
-        .logout { margin-top: 20px; display: inline-block; }
+        .logout { margin-top: 20px; display: inline-block; color: #dc3545; }
     </style>
 </head>
 <body>
@@ -83,7 +76,7 @@ HTML_TEMPLATE = '''
         {% if user %}
             <h1>👋 Добро пожаловать, {{ user }}!</h1>
             <p style="margin: 20px 0; color: #555;">Вы успешно вошли в систему.</p>
-            <a href="/logout" class="logout" style="color: #dc3545;">Выйти</a>
+            <a href="/logout" class="logout">Выйти</a>
         {% else %}
             <h1>🚀 Добро пожаловать!</h1>
             
@@ -100,21 +93,12 @@ HTML_TEMPLATE = '''
                 <input type="password" name="password" placeholder="Пароль" required>
                 <button type="submit">Войти</button>
             </form>
-            
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    {% for category, message in messages %}
-                        <div class="message {{ category }}">{{ message }}</div>
-                    {% endfor %}
-                {% endif %}
-            {% endwith %}
         {% endif %}
     </div>
 </body>
 </html>
 '''
 
-# --- Главная страница
 @app.route('/')
 def index():
     return render_template_string(HTML_TEMPLATE, user=None)
