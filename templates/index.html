@@ -7,17 +7,24 @@
 
     <!-- Font Awesome (иконки) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <style>
-        /* ===== ГЛОБАЛЬНЫЕ СТИЛИ ===== */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        /* ====================================
+           ГЛОБАЛЬНЫЕ СТИЛИ
+           ==================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         body {
             font-family: 'Inter', sans-serif;
-            background: #f8f9fc;
-            color: #1a1a2e;
+            background: #0b0b1a;
+            color: #ffffff;
             line-height: 1.6;
+            overflow-x: hidden;
         }
         a { text-decoration: none; color: inherit; }
         .container {
@@ -26,15 +33,17 @@
             padding: 0 20px;
         }
 
-        /* ===== ШАПКА ===== */
+        /* ====================================
+           ШАПКА (НАВИГАЦИЯ)
+           ==================================== */
         .navbar {
             padding: 18px 0;
-            background: white;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
+            background: rgba(11, 11, 26, 0.85);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             position: sticky;
             top: 0;
             z-index: 1000;
-            backdrop-filter: blur(10px);
         }
         .navbar .container {
             display: flex;
@@ -42,6 +51,14 @@
             align-items: center;
             flex-wrap: wrap;
             gap: 15px;
+        }
+        .navbar-brand {
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #a855f7, #6366f1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
         }
         .navbar-brand img {
             height: 45px;
@@ -51,207 +68,242 @@
         .nav-links {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 25px;
             flex-wrap: wrap;
         }
         .nav-links a {
             font-size: 14px;
             font-weight: 500;
-            color: #1a1a2e;
+            color: rgba(255, 255, 255, 0.7);
             transition: 0.3s;
-            padding: 8px 0;
+            padding: 6px 0;
             border-bottom: 2px solid transparent;
         }
         .nav-links a:hover {
-            color: #6c63ff;
-            border-bottom-color: #6c63ff;
+            color: #a855f7;
+            border-bottom-color: #a855f7;
         }
         .nav-links .btn-primary {
-            background: #6c63ff;
-            color: white !important;
-            padding: 10px 24px;
-            border-radius: 30px;
+            background: linear-gradient(135deg, #a855f7, #6366f1);
+            color: #fff !important;
+            padding: 10px 28px;
+            border-radius: 40px;
             font-weight: 600;
             border: none;
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
             transition: 0.3s;
-            box-shadow: 0 4px 15px rgba(108, 99, 255, 0.3);
         }
         .nav-links .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(108, 99, 255, 0.4);
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.5);
             border-bottom-color: transparent;
         }
         .nav-links .btn-outline {
-            border: 1px solid #ddd;
-            padding: 10px 24px;
-            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 10px 28px;
+            border-radius: 40px;
             font-weight: 500;
             transition: 0.3s;
         }
         .nav-links .btn-outline:hover {
-            border-color: #6c63ff;
-            background: #f0f0ff;
+            border-color: #a855f7;
+            background: rgba(168, 85, 247, 0.05);
         }
         .user-greeting {
             font-weight: 600;
-            color: #6c63ff;
+            color: #a855f7;
         }
 
-        /* ===== ГЕРОЙ ===== */
+        /* ====================================
+           ГЕРОЙ (ПЕРВЫЙ ЭКРАН)
+           ==================================== */
         .hero {
-            padding: 80px 0 60px;
-            background: linear-gradient(135deg, #f8f9fc 0%, #eef0ff 100%);
+            padding: 100px 0 80px;
+            background: radial-gradient(ellipse at 30% 30%, rgba(168, 85, 247, 0.08) 0%, transparent 70%);
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.05) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 0;
         }
         .hero .container {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 50px;
+            gap: 60px;
             align-items: center;
+            position: relative;
+            z-index: 1;
         }
         .hero h1 {
-            font-size: 48px;
+            font-size: 56px;
             font-weight: 900;
             line-height: 1.1;
             margin-bottom: 20px;
-            color: #1a1a2e;
         }
         .hero h1 span {
-            background: linear-gradient(135deg, #6c63ff, #3b82f6);
+            background: linear-gradient(135deg, #a855f7, #6366f1);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
         .hero p {
             font-size: 18px;
-            color: #555;
-            margin-bottom: 30px;
-            max-width: 500px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 35px;
+            max-width: 480px;
+            line-height: 1.7;
         }
         .hero .btn-hero {
-            background: #6c63ff;
-            color: white;
-            padding: 14px 40px;
-            border-radius: 40px;
+            background: linear-gradient(135deg, #a855f7, #6366f1);
+            color: #fff;
+            padding: 16px 44px;
+            border-radius: 50px;
             font-weight: 600;
             font-size: 16px;
-            border: none;
-            transition: 0.3s;
-            box-shadow: 0 4px 20px rgba(108, 99, 255, 0.4);
             display: inline-block;
+            box-shadow: 0 4px 30px rgba(99, 102, 241, 0.35);
+            transition: 0.3s;
+            border: none;
+            cursor: pointer;
         }
         .hero .btn-hero:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 30px rgba(108, 99, 255, 0.5);
+            box-shadow: 0 8px 40px rgba(99, 102, 241, 0.5);
         }
         .hero .stat {
             display: flex;
-            gap: 40px;
-            margin-top: 30px;
-        }
-        .hero .stat-item {
-            font-size: 14px;
-            color: #555;
+            gap: 50px;
+            margin-top: 40px;
         }
         .hero .stat-item strong {
-            font-size: 24px;
-            color: #1a1a2e;
+            font-size: 28px;
             display: block;
+            color: #fff;
+        }
+        .hero .stat-item span {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.5);
         }
         .hero-image {
             text-align: center;
-            font-size: 120px;
-            opacity: 0.9;
+            font-size: 140px;
+            opacity: 0.6;
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
         }
 
-        /* ===== СЛАЙДЕР (КАРУСЕЛЬ) ===== */
+        /* ====================================
+           СЛАЙДЕР (НАШИ РАБОТЫ)
+           ==================================== */
         .slider-section {
-            padding: 60px 0;
-            background: #fff;
+            padding: 80px 0;
+            background: #0b0b1a;
         }
         .slider-section h2 {
             text-align: center;
-            font-size: 36px;
+            font-size: 38px;
             font-weight: 800;
             margin-bottom: 10px;
         }
         .slider-section .subtitle {
             text-align: center;
-            color: #666;
-            margin-bottom: 40px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 50px;
             font-size: 18px;
         }
         .slider-container {
             position: relative;
-            max-width: 1000px;
+            max-width: 900px;
             margin: 0 auto;
             overflow: hidden;
             border-radius: 24px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
         }
         .slider-track {
             display: flex;
-            transition: transform 0.5s ease;
+            transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
         }
         .slider-slide {
             min-width: 100%;
-            padding: 40px 60px;
-            background: #f8f9fc;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            padding: 50px 60px;
             text-align: center;
         }
         .slider-slide img {
             max-width: 100%;
-            max-height: 350px;
+            max-height: 320px;
             border-radius: 16px;
             object-fit: cover;
             margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
         .slider-slide h3 {
             font-size: 24px;
             font-weight: 700;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
         .slider-slide p {
-            color: #555;
+            color: rgba(255, 255, 255, 0.6);
             max-width: 600px;
+            margin: 0 auto 15px;
+        }
+        .slider-slide .btn-link {
+            display: inline-block;
+            color: #a855f7;
+            font-weight: 600;
+            border-bottom: 2px solid #a855f7;
+            padding-bottom: 4px;
         }
         .slider-btn {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            background: white;
-            border: none;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
             border-radius: 50%;
             width: 50px;
             height: 50px;
             font-size: 24px;
             cursor: pointer;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             transition: 0.3s;
+            backdrop-filter: blur(10px);
             z-index: 10;
         }
         .slider-btn:hover {
-            background: #6c63ff;
-            color: white;
+            background: #a855f7;
+            border-color: #a855f7;
         }
         .slider-btn.prev { left: 20px; }
         .slider-btn.next { right: 20px; }
 
-        /* ===== УСЛУГИ ===== */
+        /* ====================================
+           УСЛУГИ
+           ==================================== */
         .services {
             padding: 80px 0;
-            background: white;
+            background: #0b0b1a;
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
         }
         .services h2 {
             text-align: center;
-            font-size: 36px;
+            font-size: 38px;
             font-weight: 800;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
         .services .subtitle {
             text-align: center;
-            color: #666;
+            color: rgba(255, 255, 255, 0.5);
             margin-bottom: 50px;
             font-size: 18px;
         }
@@ -261,17 +313,18 @@
             gap: 30px;
         }
         .service-card {
-            background: #f8f9fc;
-            padding: 35px 30px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 40px 30px;
             border-radius: 24px;
-            transition: 0.4s;
-            border: 1px solid transparent;
             text-align: center;
+            transition: 0.4s;
         }
         .service-card:hover {
             transform: translateY(-8px);
-            border-color: #6c63ff;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.05);
+            border-color: rgba(168, 85, 247, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.05);
         }
         .service-card .icon {
             font-size: 48px;
@@ -284,124 +337,141 @@
             margin-bottom: 10px;
         }
         .service-card p {
-            color: #666;
+            color: rgba(255, 255, 255, 0.6);
             font-size: 15px;
             margin-bottom: 15px;
         }
         .service-card .price {
-            font-size: 26px;
+            font-size: 28px;
             font-weight: 800;
-            color: #6c63ff;
-            margin-bottom: 20px;
+            background: linear-gradient(135deg, #a855f7, #6366f1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             display: block;
+            margin-bottom: 20px;
         }
         .service-card .btn-order {
-            background: #6c63ff;
-            color: white;
+            background: linear-gradient(135deg, #a855f7, #6366f1);
             border: none;
             padding: 12px 30px;
             border-radius: 40px;
+            color: #fff;
             font-weight: 600;
             transition: 0.3s;
             width: 100%;
             cursor: pointer;
         }
         .service-card .btn-order:hover {
-            background: #5a52d5;
             transform: scale(1.02);
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.3);
         }
 
-        /* ===== ПОРТФОЛИО (СЕТКА) ===== */
-        .portfolio {
-            padding: 80px 0;
-            background: #f8f9fc;
-        }
-        .portfolio h2 {
-            text-align: center;
-            font-size: 36px;
-            font-weight: 800;
-            margin-bottom: 10px;
-        }
-        .portfolio .subtitle {
-            text-align: center;
-            color: #666;
-            margin-bottom: 40px;
-            font-size: 18px;
-        }
-        .portfolio-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
-        }
-        .portfolio-item {
-            background: white;
-            border-radius: 20px;
-            overflow: hidden;
-            transition: 0.3s;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        }
-        .portfolio-item:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-        }
-        .portfolio-item img {
-            width: 100%;
-            height: 220px;
-            object-fit: cover;
-        }
-        .portfolio-item .info {
-            padding: 20px;
-        }
-        .portfolio-item .info h4 {
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-        .portfolio-item .info p {
-            color: #666;
-            font-size: 14px;
-        }
-
-        /* ===== О НАС ===== */
+        /* ====================================
+           О НАС (ПРЕИМУЩЕСТВА)
+           ==================================== */
         .about {
             padding: 80px 0;
-            background: white;
+            background: #0b0b1a;
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
         }
         .about .container {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 50px;
+            gap: 60px;
             align-items: center;
         }
         .about h2 {
-            font-size: 36px;
+            font-size: 38px;
             font-weight: 800;
             margin-bottom: 20px;
         }
         .about p {
-            color: #555;
+            color: rgba(255, 255, 255, 0.6);
             font-size: 16px;
             margin-bottom: 20px;
+            line-height: 1.7;
         }
         .about .features {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            gap: 16px;
             margin-top: 30px;
         }
         .about .feature {
             display: flex;
             align-items: center;
             gap: 12px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.8);
         }
         .about .feature i {
-            color: #6c63ff;
-            font-size: 20px;
+            color: #a855f7;
+            font-size: 18px;
         }
 
-        /* ===== ФОРМА ОБРАТНОЙ СВЯЗИ ===== */
+        /* ====================================
+           ОТЗЫВЫ
+           ==================================== */
+        .reviews {
+            padding: 80px 0;
+            background: #0b0b1a;
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
+        }
+        .reviews h2 {
+            text-align: center;
+            font-size: 38px;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+        .reviews .subtitle {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 50px;
+            font-size: 18px;
+        }
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+        .review-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 30px;
+            border-radius: 20px;
+            transition: 0.3s;
+        }
+        .review-card:hover {
+            border-color: rgba(168, 85, 247, 0.3);
+        }
+        .review-card .stars {
+            color: #fbbf24;
+            font-size: 18px;
+            margin-bottom: 12px;
+        }
+        .review-card p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        .review-card .author {
+            font-weight: 600;
+            color: #fff;
+        }
+        .review-card .author span {
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 13px;
+        }
+
+        /* ====================================
+           ФОРМА ОБРАТНОЙ СВЯЗИ
+           ==================================== */
         .feedback {
             padding: 80px 0;
-            background: #f8f9fc;
+            background: #0b0b1a;
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
         }
         .feedback .container {
             max-width: 600px;
@@ -409,106 +479,134 @@
             text-align: center;
         }
         .feedback h2 {
-            font-size: 36px;
+            font-size: 38px;
             font-weight: 800;
             margin-bottom: 10px;
         }
         .feedback p {
-            color: #666;
-            margin-bottom: 30px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 40px;
+            font-size: 18px;
         }
         .feedback form input,
         .feedback form textarea {
             width: 100%;
-            padding: 14px 18px;
-            margin-bottom: 15px;
-            border: 1px solid #ddd;
-            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.03);
+            color: #fff;
             font-size: 15px;
             transition: 0.3s;
             font-family: inherit;
         }
         .feedback form input:focus,
         .feedback form textarea:focus {
-            border-color: #6c63ff;
+            border-color: #a855f7;
             outline: none;
-            box-shadow: 0 0 0 4px rgba(108, 99, 255, 0.1);
+            box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.1);
+        }
+        .feedback form input::placeholder,
+        .feedback form textarea::placeholder {
+            color: rgba(255, 255, 255, 0.3);
         }
         .feedback form button {
-            background: #6c63ff;
-            color: white;
+            background: linear-gradient(135deg, #a855f7, #6366f1);
+            color: #fff;
             border: none;
-            padding: 14px 40px;
-            border-radius: 40px;
+            padding: 16px 40px;
+            border-radius: 50px;
             font-weight: 600;
             font-size: 16px;
             transition: 0.3s;
             cursor: pointer;
             width: 100%;
+            box-shadow: 0 4px 30px rgba(99, 102, 241, 0.25);
         }
         .feedback form button:hover {
-            background: #5a52d5;
             transform: scale(1.02);
+            box-shadow: 0 8px 40px rgba(99, 102, 241, 0.35);
         }
 
-        /* ===== ФУТЕР ===== */
+        /* ====================================
+           ПОДВАЛ (ФУТЕР)
+           ==================================== */
         footer {
-            padding: 40px 0;
-            background: #1a1a2e;
-            color: rgba(255,255,255,0.6);
+            padding: 50px 0 30px;
+            background: #05050f;
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
             text-align: center;
         }
         footer .social-links a {
-            color: rgba(255,255,255,0.4);
-            margin: 0 12px;
+            color: rgba(255, 255, 255, 0.3);
+            margin: 0 14px;
             font-size: 20px;
             transition: 0.3s;
         }
         footer .social-links a:hover {
-            color: white;
+            color: #a855f7;
+            transform: translateY(-2px);
         }
         footer p {
-            margin-top: 15px;
+            margin-top: 20px;
             font-size: 14px;
+            color: rgba(255, 255, 255, 0.2);
         }
 
-        /* ===== АДАПТИВНОСТЬ ===== */
-        @media (max-width: 768px) {
+        /* ====================================
+           АДАПТИВНОСТЬ
+           ==================================== */
+        @media (max-width: 992px) {
             .hero .container {
                 grid-template-columns: 1fr;
                 text-align: center;
             }
+            .hero h1 {
+                font-size: 40px;
+            }
+            .hero p {
+                max-width: 100%;
+                margin: 0 auto 30px;
+            }
             .hero .stat {
                 justify-content: center;
                 flex-wrap: wrap;
+                gap: 30px;
             }
             .about .container {
                 grid-template-columns: 1fr;
                 text-align: center;
             }
             .about .features {
-                grid-template-columns: 1fr;
                 justify-items: center;
             }
-            .hero h1 {
-                font-size: 32px;
-            }
-            .services h2,
-            .slider-section h2,
-            .portfolio h2,
-            .about h2,
-            .feedback h2 {
-                font-size: 28px;
-            }
+        }
+
+        @media (max-width: 768px) {
             .navbar .container {
                 flex-direction: column;
                 align-items: stretch;
             }
             .nav-links {
                 justify-content: center;
+                gap: 15px;
+            }
+            .nav-links a {
+                font-size: 13px;
+            }
+            .hero h1 {
+                font-size: 32px;
+            }
+            .hero {
+                padding: 60px 0 50px;
+            }
+            .services-grid,
+            .reviews-grid {
+                grid-template-columns: 1fr;
             }
             .slider-slide {
-                padding: 20px;
+                padding: 30px 20px;
             }
             .slider-slide img {
                 max-height: 200px;
@@ -520,221 +618,239 @@
             }
             .slider-btn.prev { left: 10px; }
             .slider-btn.next { right: 10px; }
+            .about .features {
+                grid-template-columns: 1fr;
+            }
+            .services h2,
+            .slider-section h2,
+            .about h2,
+            .reviews h2,
+            .feedback h2 {
+                font-size: 28px;
+            }
         }
     </style>
 </head>
 <body>
 
-<!-- ===== ШАПКА ===== -->
-<nav class="navbar">
-    <div class="container">
-        <a class="navbar-brand" href="/">
-            <img src="/static/logo.png" alt="MYSTUDIO">
-        </a>
-        <div class="nav-links">
-            <a href="/#slider">Работы</a>
-            <a href="/#services">Услуги</a>
-            <a href="/#about">О нас</a>
-            <a href="/contact">Контакты</a>
-            {% if current_user.is_authenticated %}
-                <span class="user-greeting">👋 {{ current_user.username }}</span>
-                <a href="/profile"><i class="fas fa-user"></i> Профиль</a>
-                {% if current_user.is_admin %}<a href="/admin"><i class="fas fa-crown"></i> Админ</a>{% endif %}
-                <a href="/logout" style="color: #e74c3c;"><i class="fas fa-sign-out-alt"></i> Выйти</a>
-            {% else %}
-                <a href="/login" class="btn-outline">Войти</a>
-                <a href="/register" class="btn-primary">Регистрация</a>
-            {% endif %}
-        </div>
-    </div>
-</nav>
-
-<!-- ===== ГЕРОЙ ===== -->
-<section class="hero">
-    <div class="container">
-        <div>
-            <h1>Разрабатываем <br><span>бренды, которые работают</span></h1>
-            <p>Брендбук, айдентика, фирменный стиль и дизайн под ключ для вашего бизнеса.</p>
-            <a href="/contact" class="btn-hero">Заказать консультацию</a>
-            <div class="stat">
-                <div class="stat-item"><strong>5+</strong> лет опыта</div>
-                <div class="stat-item"><strong>100+</strong> проектов</div>
-                <div class="stat-item"><strong>98%</strong> довольных клиентов</div>
-            </div>
-        </div>
-        <div class="hero-image">
-            🚀
-        </div>
-    </div>
-</section>
-
-<!-- ===== СЛАЙДЕР ===== -->
-<section class="slider-section" id="slider">
-    <div class="container">
-        <h2>Наши работы</h2>
-        <p class="subtitle">Примеры проектов, которые мы создали для наших клиентов</p>
-        <div class="slider-container">
-            <div class="slider-track" id="sliderTrack">
-                {% if works %}
-                    {% for work in works %}
-                    <div class="slider-slide">
-                        <img src="{{ work.image_url or 'https://via.placeholder.com/800x400?text=Проект' }}" alt="{{ work.title }}">
-                        <h3>{{ work.title }}</h3>
-                        <p>{{ work.description }}</p>
-                        {% if work.link %}<a href="{{ work.link }}" target="_blank" class="btn btn-primary" style="display:inline-block; margin-top:15px; padding:10px 30px; border-radius:30px; background:#6c63ff; color:white;">Посмотреть проект</a>{% endif %}
-                    </div>
-                    {% endfor %}
+    <!-- ==========================================
+    ШАПКА (НАВИГАЦИЯ)
+    ========================================== -->
+    <nav class="navbar">
+        <div class="container">
+            <a class="navbar-brand" href="/">✦ MYSTUDIO</a>
+            <div class="nav-links">
+                <a href="#slider">Работы</a>
+                <a href="#services">Услуги</a>
+                <a href="#about">О нас</a>
+                <a href="#reviews">Отзывы</a>
+                <a href="#feedback">Контакты</a>
+                {% if current_user.is_authenticated %}
+                    <span class="user-greeting">👋 {{ current_user.username }}</span>
+                    <a href="/profile"><i class="fas fa-user"></i> Профиль</a>
+                    {% if current_user.is_admin %}<a href="/admin"><i class="fas fa-crown"></i> Админ</a>{% endif %}
+                    <a href="/logout" style="color: #f87171;"><i class="fas fa-sign-out-alt"></i> Выйти</a>
                 {% else %}
-                    <div class="slider-slide">
-                        <img src="https://via.placeholder.com/800x400?text=Добавьте+работы+в+админке" alt="Нет работ">
-                        <h3>Добавьте свои работы</h3>
-                        <p>Зайдите в админ-панель и добавьте проекты в раздел "Портфолио"</p>
-                    </div>
+                    <a href="/login" class="btn-outline">Войти</a>
+                    <a href="/register" class="btn-primary">Регистрация</a>
                 {% endif %}
             </div>
-            <button class="slider-btn prev" onclick="slidePrev()">‹</button>
-            <button class="slider-btn next" onclick="slideNext()">›</button>
         </div>
-    </div>
-</section>
+    </nav>
 
-<!-- ===== УСЛУГИ ===== -->
-<section class="services" id="services">
-    <div class="container">
-        <h2>Наши услуги</h2>
-        <p class="subtitle">Создаём визуальные концепции, которые решают бизнес-задачи</p>
-        <div class="services-grid">
-            {% for service in services %}
-            <div class="service-card">
-                <span class="icon">
-                    {% if 'Брендбук' in service.title %}📘
-                    {% elif 'Фирменный стиль' in service.title %}🎨
-                    {% elif 'Айдентика' in service.title %}✨
-                    {% elif 'Дизайн' in service.title %}🖌️
-                    {% elif 'SMM' in service.title %}📱
-                    {% elif 'Сайт' in service.title %}🌐
-                    {% else %}⚡
-                    {% endif %}
-                </span>
-                <h3>{{ service.title }}</h3>
-                <p>{{ service.description }}</p>
-                <span class="price">{{ service.price }}</span>
-                <form action="/order" method="POST">
-                    <input type="hidden" name="service" value="{{ service.title }}">
-                    <input type="hidden" name="description" value="{{ service.description }}">
-                    <button class="btn-order"><i class="fas fa-rocket"></i> Заказать</button>
-                </form>
+    <!-- ==========================================
+    ГЕРОЙ (ПЕРВЫЙ ЭКРАН)
+    ========================================== -->
+    <section class="hero">
+        <div class="container">
+            <div>
+                <h1>Разрабатываем <br><span>бренды, которые работают</span></h1>
+                <p>Брендбук, айдентика, фирменный стиль и дизайн под ключ для вашего бизнеса.</p>
+                <a href="#feedback" class="btn-hero">Заказать консультацию</a>
+                <div class="stat">
+                    <div class="stat-item"><strong>5+</strong><span>лет опыта</span></div>
+                    <div class="stat-item"><strong>100+</strong><span>проектов</span></div>
+                    <div class="stat-item"><strong>98%</strong><span>довольных клиентов</span></div>
+                </div>
             </div>
-            {% endfor %}
+            <div class="hero-image">🚀</div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- ===== ПОРТФОЛИО ===== -->
-<section class="portfolio" id="portfolio">
-    <div class="container">
-        <h2>Портфолио</h2>
-        <p class="subtitle">Наши проекты в разных сферах</p>
-        <div class="portfolio-grid">
-            {% if works %}
-                {% for work in works %}
-                <div class="portfolio-item">
-                    <img src="{{ work.image_url or 'https://via.placeholder.com/400x250?text=Проект' }}" alt="{{ work.title }}">
-                    <div class="info">
-                        <h4>{{ work.title }}</h4>
-                        <p>{{ work.description }}</p>
-                        {% if work.link %}<a href="{{ work.link }}" target="_blank" style="color:#6c63ff;">Смотреть проект →</a>{% endif %}
-                    </div>
+    <!-- ==========================================
+    СЛАЙДЕР (НАШИ РАБОТЫ)
+    ========================================== -->
+    <section class="slider-section" id="slider">
+        <div class="container">
+            <h2>Наши работы</h2>
+            <p class="subtitle">Примеры проектов, которые мы создали для клиентов</p>
+            <div class="slider-container">
+                <div class="slider-track" id="sliderTrack">
+                    {% if works %}
+                        {% for work in works %}
+                        <div class="slider-slide">
+                            <img src="{{ work.image_url or 'https://via.placeholder.com/800x450?text=Проект' }}" alt="{{ work.title }}">
+                            <h3>{{ work.title }}</h3>
+                            <p>{{ work.description }}</p>
+                            {% if work.link %}<a href="{{ work.link }}" target="_blank" class="btn-link">Смотреть проект →</a>{% endif %}
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="slider-slide">
+                            <img src="https://via.placeholder.com/800x450?text=Добавьте+работы+в+админке" alt="Нет работ">
+                            <h3>Добавьте свои работы</h3>
+                            <p>Зайдите в админ-панель и добавьте проекты в раздел «Портфолио»</p>
+                        </div>
+                    {% endif %}
+                </div>
+                <button class="slider-btn prev" onclick="slidePrev()">‹</button>
+                <button class="slider-btn next" onclick="slideNext()">›</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==========================================
+    УСЛУГИ
+    ========================================== -->
+    <section class="services" id="services">
+        <div class="container">
+            <h2>Наши услуги</h2>
+            <p class="subtitle">Создаём визуальные концепции, которые решают бизнес-задачи</p>
+            <div class="services-grid">
+                {% for service in services %}
+                <div class="service-card">
+                    <span class="icon">
+                        {% if 'Брендбук' in service.title %}📘
+                        {% elif 'Фирменный стиль' in service.title %}🎨
+                        {% elif 'Айдентика' in service.title %}✨
+                        {% elif 'Дизайн' in service.title %}🖌️
+                        {% elif 'SMM' in service.title %}📱
+                        {% elif 'Сайт' in service.title %}🌐
+                        {% else %}⚡
+                        {% endif %}
+                    </span>
+                    <h3>{{ service.title }}</h3>
+                    <p>{{ service.description }}</p>
+                    <span class="price">{{ service.price }}</span>
+                    <form action="/order" method="POST">
+                        <input type="hidden" name="service" value="{{ service.title }}">
+                        <input type="hidden" name="description" value="{{ service.description }}">
+                        <button class="btn-order"><i class="fas fa-rocket"></i> Заказать</button>
+                    </form>
                 </div>
                 {% endfor %}
-            {% else %}
-                <div class="portfolio-item">
-                    <img src="https://via.placeholder.com/400x250?text=Добавьте+работу" alt="Нет работ">
-                    <div class="info">
-                        <h4>Нет добавленных работ</h4>
-                        <p>Зайдите в админ-панель и добавьте свои проекты</p>
-                    </div>
-                </div>
-            {% endif %}
-        </div>
-    </div>
-</section>
-
-<!-- ===== О НАС ===== -->
-<section class="about" id="about">
-    <div class="container">
-        <div>
-            <h2>Кто мы и почему нам доверяют</h2>
-            <p>MYSTUDIO — это команда дизайнеров, маркетологов и разработчиков. Мы создаём не просто красивые картинки, а эффективные инструменты для бизнеса.</p>
-            <p>Наш подход — сочетание креативности и стратегии. Каждый проект начинается с анализа целевой аудитории и конкурентов.</p>
-            <div class="features">
-                <div class="feature"><i class="fas fa-check-circle"></i> Индивидуальный подход</div>
-                <div class="feature"><i class="fas fa-check-circle"></i> Фиксированные цены</div>
-                <div class="feature"><i class="fas fa-check-circle"></i> Соблюдение сроков</div>
-                <div class="feature"><i class="fas fa-check-circle"></i> Полное сопровождение</div>
             </div>
         </div>
-        <div style="text-align: center; font-size: 120px; opacity: 0.3;">⭐</div>
-    </div>
-</section>
+    </section>
 
-<!-- ===== ФОРМА ОБРАТНОЙ СВЯЗИ ===== -->
-<section class="feedback" id="feedback">
-    <div class="container">
-        <h2>📩 Свяжитесь с нами</h2>
-        <p>Оставьте заявку, и мы перезвоним вам в течение 15 минут</p>
-        <form action="/feedback" method="POST">
-            <input type="text" name="name" placeholder="Ваше имя" required>
-            <input type="email" name="email" placeholder="Email" required>
-            <textarea name="message" rows="4" placeholder="Опишите задачу" required></textarea>
-            <button type="submit"><i class="fas fa-paper-plane"></i> Отправить</button>
-        </form>
-    </div>
-</section>
+    <!-- ==========================================
+    О НАС (ПРЕИМУЩЕСТВА)
+    ========================================== -->
+    <section class="about" id="about">
+        <div class="container">
+            <div>
+                <h2>Кто мы и почему вам стоит выбрать нас</h2>
+                <p>MYSTUDIO — это команда дизайнеров, маркетологов и разработчиков. Мы создаём не просто красивые картинки, а инструменты, которые приносят прибыль.</p>
+                <p>Наш подход — сочетание креативности и стратегии. Каждый проект начинается с анализа целевой аудитории и конкурентов.</p>
+                <div class="features">
+                    <div class="feature"><i class="fas fa-check-circle"></i> Индивидуальный подход</div>
+                    <div class="feature"><i class="fas fa-check-circle"></i> Фиксированные цены</div>
+                    <div class="feature"><i class="fas fa-check-circle"></i> Соблюдение сроков</div>
+                    <div class="feature"><i class="fas fa-check-circle"></i> Полное сопровождение</div>
+                </div>
+            </div>
+            <div style="text-align: center; font-size: 120px; opacity: 0.15;">⭐</div>
+        </div>
+    </section>
 
-<!-- ===== ФУТЕР ===== -->
-<footer>
-    <div class="social-links">
-        <a href="#"><i class="fab fa-telegram"></i></a>
-        <a href="#"><i class="fab fa-instagram"></i></a>
-        <a href="#"><i class="fab fa-youtube"></i></a>
-        <a href="#"><i class="fab fa-github"></i></a>
-    </div>
-    <p>© 2026 MYSTUDIO. Все права защищены.</p>
-</footer>
+    <!-- ==========================================
+    ОТЗЫВЫ
+    ========================================== -->
+    <section class="reviews" id="reviews">
+        <div class="container">
+            <h2>Отзывы наших клиентов</h2>
+            <p class="subtitle">Что говорят о нас те, кому мы помогли</p>
+            <div class="reviews-grid">
+                <div class="review-card">
+                    <div class="stars">★★★★★</div>
+                    <p>«Отличная работа! Сделали брендбук за 2 недели. Всё чётко, профессионально и с душой. Рекомендую!»</p>
+                    <div class="author">Алексей Иванов <span>— CEO, «ТехноСтарт»</span></div>
+                </div>
+                <div class="review-card">
+                    <div class="stars">★★★★★</div>
+                    <p>«Разработали фирменный стиль для нашего кафе. Теперь нас узнают на улице! Спасибо команде MYSTUDIO.»</p>
+                    <div class="author">Екатерина Смирнова <span>— Владелец, «Кофеин»</span></div>
+                </div>
+                <div class="review-card">
+                    <div class="stars">★★★★★</div>
+                    <p>«Первый раз заказывали айдентику, и мы очень довольны результатом. Профессиональный подход и креатив.»</p>
+                    <div class="author">Михаил Петров <span>— Директор, «ЭкоБренд»</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<!-- ===== СКРИПТ СЛАЙДЕРА ===== -->
-<script>
-    let currentSlide = 0;
-    const track = document.getElementById('sliderTrack');
-    const slides = track ? track.querySelectorAll('.slider-slide') : [];
-    const totalSlides = slides.length;
+    <!-- ==========================================
+    ФОРМА ОБРАТНОЙ СВЯЗИ
+    ========================================== -->
+    <section class="feedback" id="feedback">
+        <div class="container">
+            <h2>📩 Свяжитесь с нами</h2>
+            <p>Оставьте заявку, и мы перезвоним вам в течение 15 минут</p>
+            <form action="/feedback" method="POST">
+                <input type="text" name="name" placeholder="Ваше имя" required>
+                <input type="email" name="email" placeholder="Ваш Email" required>
+                <textarea name="message" rows="5" placeholder="Опишите задачу" required></textarea>
+                <button type="submit"><i class="fas fa-paper-plane"></i> Отправить</button>
+            </form>
+        </div>
+    </section>
 
-    function updateSlider() {
-        if (!track || totalSlides === 0) return;
-        track.style.transform = `translateX(-${currentSlide * 100}%)`;
-    }
+    <!-- ==========================================
+    ПОДВАЛ (ФУТЕР)
+    ========================================== -->
+    <footer>
+        <div class="social-links">
+            <a href="#"><i class="fab fa-telegram"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+            <a href="#"><i class="fab fa-github"></i></a>
+        </div>
+        <p>© 2026 MYSTUDIO. Все права защищены.</p>
+    </footer>
 
-    function slideNext() {
-        if (totalSlides === 0) return;
-        currentSlide = (currentSlide + 1) % totalSlides;
+    <!-- ==========================================
+    СКРИПТ ДЛЯ СЛАЙДЕРА
+    ========================================== -->
+    <script>
+        let currentSlide = 0;
+        const track = document.getElementById('sliderTrack');
+        const slides = track ? track.querySelectorAll('.slider-slide') : [];
+        const totalSlides = slides.length;
+
+        function updateSlider() {
+            if (!track || totalSlides === 0) return;
+            track.style.transform = `translateX(-${currentSlide * 100}%)`;
+        }
+
+        function slideNext() {
+            if (totalSlides === 0) return;
+            currentSlide = (currentSlide + 1) % totalSlides;
+            updateSlider();
+        }
+
+        function slidePrev() {
+            if (totalSlides === 0) return;
+            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+            updateSlider();
+        }
+
+        // Автоматическая прокрутка каждые 5 секунд
+        if (totalSlides > 1) {
+            setInterval(slideNext, 5000);
+        }
+
         updateSlider();
-    }
-
-    function slidePrev() {
-        if (totalSlides === 0) return;
-        currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
-        updateSlider();
-    }
-
-    // Автоматическая прокрутка каждые 4 секунды
-    if (totalSlides > 1) {
-        setInterval(slideNext, 4000);
-    }
-
-    // Инициализация
-    updateSlider();
-</script>
-
+    </script>
 </body>
 </html>
