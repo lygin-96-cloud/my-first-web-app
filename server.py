@@ -7,24 +7,23 @@ from datetime import datetime
 app = Flask(__name__)
 app.secret_key = 'super-secret-key-12345'
 
-# --- НАСТРОЙКА БАЗЫ ДАННЫХ ---
+# --- БАЗА ДАННЫХ ---
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-# --- НАСТРОЙКА АВТОРИЗАЦИИ ---
+# --- АВТОРИЗАЦИЯ ---
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-# --- МОДЕЛЬ ПОЛЬЗОВАТЕЛЯ ---
+# --- МОДЕЛИ ---
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
 
-# --- МОДЕЛЬ ЗАКАЗА ---
 class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -33,7 +32,6 @@ class Order(db.Model):
     status = db.Column(db.String(50), default='Новый')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-# --- МОДЕЛЬ УСЛУГИ ---
 class Service(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
@@ -45,7 +43,7 @@ class Service(db.Model):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# --- СОЗДАНИЕ БАЗЫ ДАННЫХ ---
+# --- СОЗДАНИЕ БАЗЫ ---
 with app.app_context():
     db.create_all()
     if not User.query.filter_by(username='admin').first():
@@ -54,7 +52,6 @@ with app.app_context():
         db.session.commit()
 
 # --- МАРШРУТЫ ---
-
 @app.route('/')
 def index():
     services = Service.query.all()
@@ -109,6 +106,17 @@ def order():
     db.session.commit()
     flash('Заказ отправлен!', 'success')
     return redirect(url_for('profile'))
+
+@app.route('/feedback', methods=['POST'])
+def feedback():
+    name = request.form.get('name')
+    email = request.form.get('email')
+    phone = request.form.get('phone')
+    message = request.form.get('message')
+    
+    # Здесь можно добавить отправку в Telegram
+    flash('Сообщение отправлено! Мы свяжемся с вами.', 'success')
+    return redirect(url_for('index'))
 
 @app.route('/admin')
 @login_required
