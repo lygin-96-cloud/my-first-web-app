@@ -16,7 +16,7 @@
         body {
             font-family: 'Inter', sans-serif;
             background: #0b0b1a;
-            color: white;
+            color: rgb(146, 81, 81);
             min-height: 100vh;
         }
 
@@ -365,23 +365,23 @@
 
     <!-- ===== ШАПКА ===== -->
     <nav class="navbar">
-        <a class="navbar-brand" href="/">
-            <img src="/static/logo.png" alt="MYSTUDIO">
-        </a>
-        <div class="nav-links">
-            <a href="/#services">Услуги</a>
-            <a href="/#contact">Контакты</a>
-            {% if current_user.is_authenticated %}
-                <span class="user-greeting">👋 {{ current_user.username }}</span>
-                <a href="/profile"><i class="fas fa-user"></i> Профиль</a>
-                {% if current_user.is_admin %}<a href="/admin"><i class="fas fa-crown"></i> Админ</a>{% endif %}
-                <a href="/logout" class="btn-outline"><i class="fas fa-sign-out-alt"></i> Выйти</a>
-            {% else %}
-                <a href="/login" class="btn-outline"><i class="fas fa-sign-in-alt"></i> Войти</a>
-                <a href="/register" class="btn-primary"><i class="fas fa-user-plus"></i> Регистрация</a>
-            {% endif %}
-        </div>
-    </nav>
+    <a class="navbar-brand" href="/" style="display: flex; align-items: center;">
+        <img src="/static/logo.png" alt="MYSTUDIO" style="height: 120px; width: auto; display: block; filter: drop-shadow(0 0 20px rgba(168, 85, 247, 0.3));">
+    </a>
+    <div class="nav-links">
+        <a href="/#services">Услуги</a>
+        <a href="/#contact">Контакты</a>
+        {% if current_user.is_authenticated %}
+            <span class="user-greeting">👋 {{ current_user.username }}</span>
+            <a href="/profile"><i class="fas fa-user"></i> Профиль</a>
+            {% if current_user.is_admin %}<a href="/admin"><i class="fas fa-crown"></i> Админ</a>{% endif %}
+            <a href="/logout" class="btn-outline"><i class="fas fa-sign-out-alt"></i> Выйти</a>
+        {% else %}
+            <a href="/login" class="btn-outline"><i class="fas fa-sign-in-alt"></i> Войти</a>
+            <a href="/register" class="btn-primary"><i class="fas fa-user-plus"></i> Регистрация</a>
+        {% endif %}
+    </div>
+</nav>
 
     <!-- ===== ГЕРОЙ ===== -->
     <section class="hero">
